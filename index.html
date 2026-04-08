@@ -61,6 +61,7 @@ input::placeholder{color:#555}
 .s-err{background:#3a1a1a;color:#f87171}
 .s-ing{background:#3a3000;color:#d4a84b}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 <div class="app">
@@ -87,6 +88,7 @@ input::placeholder{color:#555}
         <button class="btn" onclick="resetManual()">重設</button>
         <button class="btn green" id="save-btn-manual" disabled onclick="doSave('manual')">儲存/上傳</button>
         <span id="save-badge-manual" class="sync-badge"></span>
+        <button class="btn" id="dl-btn-manual" style="display:none" onclick="downloadImg('manual-result')">⬇ 下載圖片</button>
       </div>
     </div>
     <div id="manual-result"></div>
@@ -110,6 +112,7 @@ input::placeholder{color:#555}
         <button class="btn" onclick="clearNum()">清除</button>
         <button class="btn green" id="save-btn-number" disabled onclick="doSave('number')">儲存/上傳</button>
         <span id="save-badge-number" class="sync-badge"></span>
+        <button class="btn" id="dl-btn-number" style="display:none" onclick="downloadImg('number-result')">⬇ 下載圖片</button>
       </div>
     </div>
     <div id="number-result"></div>
@@ -145,6 +148,7 @@ input::placeholder{color:#555}
           <button class="btn pri" onclick="calcTimeCustom()">起卦</button>
           <button class="btn green" id="save-btn-time-custom" disabled onclick="doSave('time-custom')">儲存/上傳</button>
           <span id="save-badge-time-custom" class="sync-badge"></span>
+          <button class="btn" id="dl-btn-time" style="display:none" onclick="downloadImg('time-result')">⬇ 下載圖片</button>
         </div>
       </div>
     </div>
@@ -233,14 +237,17 @@ function renderResult(yao6,bian6,container,method,question){
   if(container==='manual-result'){
     document.getElementById('save-btn-manual').disabled=false;
     setBadge('save-badge-manual','','');
+    var dlm=document.getElementById('dl-btn-manual');if(dlm)dlm.style.display='inline-block';
   } else if(container==='number-result'){
     document.getElementById('save-btn-number').disabled=false;
     setBadge('save-badge-number','','');
+    var dln=document.getElementById('dl-btn-number');if(dln)dln.style.display='inline-block';
   } else if(container==='time-result'){
     document.getElementById('save-btn-time-now').disabled=false;
     document.getElementById('save-btn-time-custom').disabled=false;
     setBadge('save-badge-time-now','','');
     setBadge('save-badge-time-custom','','');
+    var dlt=document.getElementById('dl-btn-time');if(dlt)dlt.style.display='inline-block';
   }
   var lz='<div class="zone">'+gcolL('本',mkSVG(yao6,bian6),benName)+gcolL('互',mkSVG(huDisp,null),huName)+gcolL('變',mkSVG(bYao,null),bianName)+'</div>';
   var rz='<div class="zone">'+gcolR('體',mkSVG(gLL.lines,null),gLL.name+gLL.wx,'',null)+gcolR('用',mkSVG(gU.lines,null),gU.name+gU.wx,rYong,vYong)+gcolR('下互',mkSVG(huL.lines,null),huL.name+huL.wx,rHuL,vHuL)+gcolR('上互',mkSVG(huU.lines,null),huU.name+huU.wx,rHuU,vHuU)+gcolR('變',mkSVG(bLL.lines,null),bLL.name+bLL.wx,rB,vB)+'</div>';
@@ -301,6 +308,29 @@ function switchTab(id){
 var now=new Date();
 document.getElementById('custom-time').value=now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate())+'T'+pad(now.getHours())+':'+pad(now.getMinutes());
 initManual();setInterval(updateClock,1000);updateClock();
+
+function downloadImg(containerId){
+  var el=document.getElementById(containerId);
+  if(!el||!el.firstChild){alert('請先起卦');return;}
+  var btn=document.getElementById('dl-btn-'+containerId.replace('-result',''));
+  if(btn){btn.textContent='截圖中...';}
+  html2canvas(el.firstChild,{
+    backgroundColor:'#242424',
+    scale:2,
+    useCORS:true
+  }).then(function(canvas){
+    var link=document.createElement('a');
+    var now=new Date();
+    var fn='梅花易數_'+now.getFullYear()+(now.getMonth()+1)+now.getDate()+'_'+now.getHours()+now.getMinutes()+'.png';
+    link.download=fn;
+    link.href=canvas.toDataURL('image/png');
+    link.click();
+    if(btn){btn.textContent='⬇ 下載圖片';}
+  }).catch(function(e){
+    alert('截圖失敗: '+e);
+    if(btn){btn.textContent='⬇ 下載圖片';}
+  });
+}
 </script>
 </body>
 </html>
