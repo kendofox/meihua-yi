@@ -87,7 +87,7 @@ input::placeholder{color:#555}
 
   <div class="panel active" id="panel-manual">
     <div class="sec">
-      <div class="sec-title">點選六爻（初爻→上爻）— 點擊切換陰陽，右鍵／長按標記動爻（橘色）</div>
+      <div class="sec-title">點選六爻（初爻→上爻）— 點擊切換陰陽，勾選框框標記動爻（橘色）</div>
       <div class="yao-grid" id="manual-yaos"></div>
       <div class="q-row" style="margin-top:12px">
         <span class="q-label">問事：</span>
@@ -300,31 +300,48 @@ function updateClock(){
 }
 var mYaos=[1,1,0,0,0,1],mBian=[false,false,false,false,false,false];
 function initManual(){
-  var g=document.getElementById('manual-yaos');g.innerHTML='';
+  var g=document.getElementById('manual-yaos');
+  g.innerHTML='';
+  var names=['初爻','第2爻','第3爻','第4爻','第5爻','上爻'];
   for(var i=0;i<6;i++){(function(idx){
-    var y=mYaos[idx],bv=mBian[idx],btn=document.createElement('div');
+    var y=mYaos[idx],bv=mBian[idx];
+    var wrap=document.createElement('div');
+    wrap.style.cssText='display:flex;flex-direction:column;align-items:center;gap:4px;';
+
+    // 勾選框（動爻）
+    var cbWrap=document.createElement('label');
+    cbWrap.style.cssText='display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;color:'+(bv?'#d4a84b':'#666')+';';
+    var cb=document.createElement('input');
+    cb.type='checkbox';
+    cb.checked=bv;
+    cb.style.cssText='width:14px;height:14px;cursor:pointer;accent-color:#d4a84b;';
+    cb.onchange=function(){mBian[idx]=this.checked;initManual();};
+    cbWrap.appendChild(cb);
+    
+
+    // 原本的爻按鈕
+    var btn=document.createElement('div');
     btn.className='yao-btn'+(y?' yang':'')+(bv?' bian':'');
     var lineColor=bv?'#d4a84b':'#e8e8e8';
     var lh=y?'<div style="width:28px;height:5px;border-radius:1px;background:'+lineColor+'"></div>':'<div style="display:flex;gap:4px"><div style="width:11px;height:5px;border-radius:1px;background:'+lineColor+'"></div><div style="width:11px;height:5px;border-radius:1px;background:'+lineColor+'"></div></div>';
-    btn.innerHTML='<span>'+(idx===0?'初爻':idx===5?'上爻':'第'+(idx+1)+'爻')+'</span>'+lh+'<span>'+(y?'陽':'陰')+(bv?'·變':'')+'</span>';
+    btn.innerHTML='<span>'+names[idx]+'</span>'+lh+'<span>'+(y?'陽':'陰')+'</span>';
+    btn.style.width='100%';
     btn.onclick=function(){mYaos[idx]=1-mYaos[idx];initManual();};
     btn.oncontextmenu=function(e){e.preventDefault();mBian[idx]=!mBian[idx];initManual();};
-    var t;var longPressed=false;
+    var t;
     btn.addEventListener('touchstart',function(){
-      longPressed=false;
-      t=setTimeout(function(){
-        longPressed=true;
-        mBian[idx]=!mBian[idx];
-        initManual();
-      },500);
+      t=setTimeout(function(){mBian[idx]=!mBian[idx];initManual();},500);
     },{passive:true});
     btn.addEventListener('touchend',function(){clearTimeout(t);},{passive:true});
     btn.addEventListener('touchmove',function(){clearTimeout(t);},{passive:true});
-    g.appendChild(btn);
+
+    wrap.appendChild(cbWrap);
+    wrap.appendChild(btn);
+    g.appendChild(wrap);
   })(i);}
 }
 function calcManual(){renderResult(mYaos.slice(),mBian.slice(),'manual-result','手動排爻',document.getElementById('q-manual').value);}
-function resetManual(){mYaos=[1,1,1,0,1,0];mBian=[false,false,false,false,false,false];initManual();document.getElementById('manual-result').innerHTML='';document.getElementById('q-manual').value='';setBtn('save-btn-manual',true);setBadge('save-badge-manual','','');}
+function resetManual(){mYaos=[1,1,1,1,1,1];mBian=[false,false,false,false,false,false];initManual();document.getElementById('manual-result').innerHTML='';document.getElementById('q-manual').value='';setBtn('save-btn-manual',true);setBadge('save-badge-manual','','');}
 function clearNum(){['n1','n2','n3'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('num-calc-preview').innerHTML='';document.getElementById('q-number').value='';}
 function calcNumber(){
   var n1=parseInt(document.getElementById('n1').value)||0,n2=parseInt(document.getElementById('n2').value)||0,n3=parseInt(document.getElementById('n3').value)||0;
