@@ -168,7 +168,7 @@ input::placeholder{color:#555}
 </div>
 
 <script>
-var WEBHOOK='https://script.google.com/macros/s/AKfycbytuZ2PwCQ08EFjpsxLixa6SIVgBNPCboYe-woZz37klJxCEZZTZl5aShXeXyVAGsttVA/exec';
+var WEBHOOK='https://script.google.com/macros/s/AKfycbzSIiaVinVvtzfHZ1-QTRPJvOZs5i4WZ_Z4en9uh3S3obUo6w1aU71g9Pt3U6F79GdBcQ/exec';
 var BAGUA=[
   {name:'乾',lines:[1,1,1],wx:'金',dir:'天'},{name:'兌',lines:[0,1,1],wx:'金',dir:'澤'},
   {name:'離',lines:[1,0,1],wx:'火',dir:'火'},{name:'震',lines:[0,0,1],wx:'木',dir:'雷'},
@@ -210,6 +210,7 @@ function doSave(key){
   setBtn(btnId,true);setBadge(badgeId,'s-ing','送出中...');
   var payload={
     timestamp:result.timestamp,method:result.method,question:result.question,
+    detail:result.detail||'',
     benName:result.benName,huName:result.huName,bianName:result.bianName,
     ti_name:result.ti.name,ti_wx:result.ti.wx,yong_name:result.yong.name,yong_wx:result.yong.wx,
     huL_name:result.huL.name,huL_wx:result.huL.wx,huU_name:result.huU.name,huU_wx:result.huU.wx,
@@ -219,7 +220,7 @@ function doSave(key){
     .then(function(){setBadge(badgeId,'s-ok','已送出，請確認試算表 ✓');setBtn(btnId,false);})
     .catch(function(){setBadge(badgeId,'s-err','失敗，請重試');setBtn(btnId,false);});
 }
-function renderResult(yao6,bian6,container,method,question){
+function renderResult(yao6,bian6,container,method,question,detail){
   var gLL=l2g([yao6[0],yao6[1],yao6[2]]),gU=l2g([yao6[3],yao6[4],yao6[5]]);
   var huL=l2g([yao6[1],yao6[2],yao6[3]]),huU=l2g([yao6[2],yao6[3],yao6[4]]);
   var bYao=yao6.map(function(v,i){return bian6[i]?1-v:v;});
@@ -232,7 +233,7 @@ function renderResult(yao6,bian6,container,method,question){
   var q=question||'';
   var now=new Date();
   var ts=now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate())+' '+pad(now.getHours())+':'+pad(now.getMinutes());
-  lastResults[container]={yao6:yao6,bian6:bian6,method:method,question:q,ti:ti,yong:yong,huL:huL,huU:huU,bL:bLL,bU:bU,benName:benName,huName:huName,bianName:bianName,timestamp:ts};
+  lastResults[container]={yao6:yao6,bian6:bian6,method:method,question:q,detail:detail||'',ti:ti,yong:yong,huL:huL,huU:huU,bL:bLL,bU:bU,benName:benName,huName:huName,bianName:bianName,timestamp:ts};
   // 啟用儲存按鈕
   if(container==='manual-result'){
     document.getElementById('save-btn-manual').disabled=false;
@@ -254,7 +255,7 @@ function renderResult(yao6,bian6,container,method,question){
   var qTag=q?'<div style="font-size:13px;color:#888;margin-bottom:8px">問事：'+q+'</div>':'';
   document.getElementById(container).innerHTML='<div class="sec">'+qTag+'<div class="sec-title">卦象結果 — '+method+'</div><div class="board-wrap"><div class="board">'+lz+'<div class="board-sep"></div>'+rz+'</div></div></div>';
 }
-function calcFromDate(dt,question){
+function calcFromDate(dt,question,methodLabel,detailLabel){
   var y=dt.getFullYear(),mo=dt.getMonth()+1,d=dt.getDate(),h=dt.getHours();
   var sc=scN(h),scName=SC[getSC(h)];
   var uN=((y+mo+d)%8)||8,lN=((y+mo+d+sc)%8)||8,dong=(y+mo+d+sc)%6||6;
@@ -262,11 +263,12 @@ function calcFromDate(dt,question){
   var y6=lg.lines.concat(ug.lines),b6=[false,false,false,false,false,false];b6[dong-1]=true;
   var s1=y+mo+d,s2=s1+sc;
   var calc='<div class="calc-row">上卦：'+s1+' ÷ 8 餘 <b>'+uN+'</b> → <b>'+ug.name+'('+ug.wx+')</b>　下卦：'+s2+' ÷ 8 餘 <b>'+lN+'</b> → <b>'+lg.name+'('+lg.wx+')</b>　動爻：'+s2+' ÷ 6 餘 <b>'+dong+'</b> → 第 <b>'+dong+'</b> 爻動</div>';
-  renderResult(y6,b6,'time-result','時間起卦 '+y+'/'+mo+'/'+d+' '+scName,question);
+  var dtStr=y+'/'+mo+'/'+d+' '+pad(dt.getHours())+':'+pad(dt.getMinutes());
+  renderResult(y6,b6,'time-result',methodLabel||'時間起卦',question,detailLabel||dtStr);
   document.getElementById('time-result').innerHTML=calc+document.getElementById('time-result').innerHTML;
 }
-function calcTimeNow(){calcFromDate(new Date(),document.getElementById('q-time-now').value);}
-function calcTimeCustom(){var val=document.getElementById('custom-time').value;if(!val){alert('請先選擇指定時間');return;}calcFromDate(new Date(val),document.getElementById('q-time-custom').value);}
+function calcTimeNow(){var n=new Date();calcFromDate(n,document.getElementById('q-time-now').value,'現在時間起卦');}
+function calcTimeCustom(){var val=document.getElementById('custom-time').value;if(!val){alert('請先選擇指定時間');return;}calcFromDate(new Date(val),document.getElementById('q-time-custom').value,'指定時間起卦');}
 function updateClock(){
   var el=document.getElementById('time-display');if(!el)return;
   var n=new Date();el.textContent=n.getFullYear()+'年'+(n.getMonth()+1)+'月'+n.getDate()+'日 '+pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());
@@ -297,7 +299,7 @@ function calcNumber(){
   var upper=((n1-1)%8)+1,lower=n2?(((n2-1)%8)+1):((n1%8)||8),dong=n3?(((n3-1)%6)+1):(((n1+(n2||0))%6)||6);
   var ug=n2g(upper),lg=n2g(lower),y6=lg.lines.concat(ug.lines),b6=[false,false,false,false,false,false];b6[dong-1]=true;
   document.getElementById('num-calc-preview').innerHTML='<div class="calc-row" style="margin-bottom:10px">上卦：'+n1+' ÷ 8 餘 <b>'+upper+'</b> → <b>'+ug.name+'('+ug.wx+')</b>　下卦：'+(n2?n2+' ÷ 8 餘 <b>'+lower:'同上 <b>'+lower)+'</b> → <b>'+lg.name+'('+lg.wx+')</b>　動爻：'+(n3?n3:n1+(n2?'+'+n2:''))+' ÷ 6 餘 <b>'+dong+'</b> → 第 <b>'+dong+'</b> 爻動</div>';
-  renderResult(y6,b6,'number-result','數字起卦（'+n1+(n2?','+n2:'')+(n3?','+n3:'')+'）',document.getElementById('q-number').value);
+  renderResult(y6,b6,'number-result','數字起卦',document.getElementById('q-number').value,n1+(n2?','+n2:'')+(n3?','+n3:''));
 }
 function switchTab(id){
   var ids=['manual','number','time'];
