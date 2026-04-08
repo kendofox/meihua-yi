@@ -60,6 +60,16 @@ input::placeholder{color:#555}
 .s-ok{background:#1a3a2a;color:#4ade80}
 .s-err{background:#3a1a1a;color:#f87171}
 .s-ing{background:#3a3000;color:#d4a84b}
+
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:999;align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:#242424;border:1px solid #444;border-radius:16px;padding:2rem;width:320px;max-width:90vw;}
+.modal-box h3{font-size:16px;color:#f0f0f0;margin-bottom:8px;}
+.modal-box p{font-size:13px;color:#888;margin-bottom:16px;line-height:1.6;}
+.modal-input{width:100%;border:1px solid #444;border-radius:8px;padding:10px 12px;font-size:15px;background:#1a1a1a;color:#f0f0f0;margin-bottom:12px;text-align:center;letter-spacing:4px;}
+.modal-input:focus{outline:none;border-color:#d4a84b;}
+.modal-err{font-size:12px;color:#f87171;margin-bottom:10px;min-height:16px;text-align:center;}
+.modal-btns{display:flex;gap:8px;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
@@ -86,7 +96,7 @@ input::placeholder{color:#555}
       <div class="flex-row">
         <button class="btn pri" onclick="calcManual()">排卦</button>
         <button class="btn" onclick="resetManual()">重設</button>
-        <button class="btn green" id="save-btn-manual" disabled onclick="doSave('manual')">儲存/上傳</button>
+        <button class="btn green" id="save-btn-manual" disabled onclick="openSaveModal('manual')">儲存/上傳</button>
         <span id="save-badge-manual" class="sync-badge"></span>
         <button class="btn" id="dl-btn-manual" style="display:none" onclick="downloadImg('manual-result')">⬇ 下載圖片</button>
       </div>
@@ -110,7 +120,7 @@ input::placeholder{color:#555}
       <div class="flex-row">
         <button class="btn pri" onclick="calcNumber()">起卦</button>
         <button class="btn" onclick="clearNum()">清除</button>
-        <button class="btn green" id="save-btn-number" disabled onclick="doSave('number')">儲存/上傳</button>
+        <button class="btn green" id="save-btn-number" disabled onclick="openSaveModal('number')">儲存/上傳</button>
         <span id="save-badge-number" class="sync-badge"></span>
         <button class="btn" id="dl-btn-number" style="display:none" onclick="downloadImg('number-result')">⬇ 下載圖片</button>
       </div>
@@ -130,7 +140,7 @@ input::placeholder{color:#555}
         </div>
         <div class="flex-row">
           <button class="btn pri" onclick="calcTimeNow()">以現在時間起卦</button>
-          <button class="btn green" id="save-btn-time-now" disabled onclick="doSave('time-now')">儲存/上傳</button>
+          <button class="btn green" id="save-btn-time-now" disabled onclick="openSaveModal('time-now')">儲存/上傳</button>
           <span id="save-badge-time-now" class="sync-badge"></span>
         </div>
       </div>
@@ -146,7 +156,7 @@ input::placeholder{color:#555}
         </div>
         <div class="flex-row">
           <button class="btn pri" onclick="calcTimeCustom()">起卦</button>
-          <button class="btn green" id="save-btn-time-custom" disabled onclick="doSave('time-custom')">儲存/上傳</button>
+          <button class="btn green" id="save-btn-time-custom" disabled onclick="openSaveModal('time-custom')">儲存/上傳</button>
           <span id="save-badge-time-custom" class="sync-badge"></span>
           <button class="btn" id="dl-btn-time" style="display:none" onclick="downloadImg('time-result')">⬇ 下載圖片</button>
         </div>
@@ -168,7 +178,7 @@ input::placeholder{color:#555}
 </div>
 
 <script>
-var WEBHOOK='https://script.google.com/macros/s/AKfycbwiTciQ37PKJpzxaHDCxfHj4JdJhNNR0pbJDcPaAhyhGg7Dk14BRkTT4DeTAs14mVMb8Q/exec';
+var WEBHOOK='https://script.google.com/macros/s/AKfycbw_Z0FNI4Ubpm6QSSeyJYcGXjayNAFUVdfEw1VvU2cdDmrf6RgEKMabRjbJgalsi_9qlA/exec';
 var BAGUA=[
   {name:'乾',lines:[1,1,1],wx:'金',dir:'天'},{name:'兌',lines:[0,1,1],wx:'金',dir:'澤'},
   {name:'離',lines:[1,0,1],wx:'火',dir:'火'},{name:'震',lines:[0,0,1],wx:'木',dir:'雷'},
@@ -339,5 +349,18 @@ function downloadImg(containerId){
   });
 }
 </script>
+
+<div class="modal-overlay" id="pw-modal">
+  <div class="modal-box">
+    <h3>🦊 這是狐狸專用的</h3>
+    <p>按了也沒用，除非你知道密碼。</p>
+    <input class="modal-input" type="password" id="pw-input" placeholder="輸入通關密碼" maxlength="10">
+    <div class="modal-err" id="pw-err"></div>
+    <div class="modal-btns">
+      <button class="btn" style="flex:1" onclick="closeModal()">取消</button>
+      <button class="btn pri" style="flex:1" onclick="submitPw()">確認</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
