@@ -6,57 +6,60 @@
 <title>梅花易數起卦工具</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f5;color:#1a1a1a;min-height:100vh}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#1a1a1a;color:#e8e8e8;min-height:100vh}
 .app{padding:1rem;max-width:1000px;margin:0 auto}
 .header{padding:1.2rem 0 1rem}
-.header h1{font-size:20px;font-weight:600;color:#1a1a1a}
+.header h1{font-size:20px;font-weight:600;color:#f0f0f0}
 .header p{font-size:13px;color:#888;margin-top:3px}
-.tabs{display:flex;gap:4px;margin-bottom:1rem;border-bottom:1px solid #e0e0e0}
+.tabs{display:flex;gap:4px;margin-bottom:1rem;border-bottom:1px solid #333}
 .tab{padding:8px 16px;font-size:14px;cursor:pointer;border:none;background:none;color:#888;border-bottom:2px solid transparent;margin-bottom:-1px}
-.tab.active{color:#1a1a1a;border-bottom-color:#1a1a1a;font-weight:500}
+.tab.active{color:#f0f0f0;border-bottom-color:#d4a84b;font-weight:500}
+.tab:hover{color:#ccc}
 .panel{display:none}.panel.active{display:block}
-.sec{background:#fff;border:1px solid #e8e8e8;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem}
+.sec{background:#242424;border:1px solid #333;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem}
 .sec-title{font-size:12px;font-weight:500;color:#888;margin-bottom:12px}
-.btn{padding:8px 16px;border:1px solid #d0d0d0;border-radius:8px;cursor:pointer;font-size:14px;background:#fff;color:#1a1a1a}
-.btn:hover{background:#f5f5f5}
-.btn.pri{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
-.btn.pri:hover{background:#333}
+.btn{padding:8px 16px;border:1px solid #444;border-radius:8px;cursor:pointer;font-size:14px;background:#2c2c2c;color:#e8e8e8}
+.btn:hover{background:#383838;border-color:#555}
+.btn.pri{background:#d4a84b;color:#1a1a1a;border-color:#d4a84b;font-weight:500}
+.btn.pri:hover{background:#e0b85a}
 .btn.green{background:#16a34a;color:#fff;border-color:#16a34a;font-size:13px;padding:7px 14px}
 .btn.green:hover{background:#15803d}
-.btn.green:disabled{background:#d1fae5;color:#a7f3d0;border-color:#d1fae5;cursor:default}
+.btn.green:disabled{background:#1a3a2a;color:#4a7a5a;border-color:#1a3a2a;cursor:default}
 .flex-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .field-label{font-size:12px;color:#888;margin-bottom:4px}
-input[type=number],input[type=text],input[type=datetime-local]{border:1px solid #d0d0d0;border-radius:8px;padding:8px 10px;font-size:14px;background:#fff;color:#1a1a1a;width:100%}
-input:focus{outline:none;border-color:#888}
+input[type=number],input[type=text],input[type=datetime-local]{border:1px solid #444;border-radius:8px;padding:8px 10px;font-size:14px;background:#2c2c2c;color:#e8e8e8;width:100%}
+input:focus{outline:none;border-color:#d4a84b}
+input::placeholder{color:#555}
 .yao-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:8px 0}
-.yao-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border:1px solid #e0e0e0;border-radius:8px;cursor:pointer;background:#f9f9f9;font-size:11px;color:#888;user-select:none;-webkit-user-select:none}
-.yao-btn.yang{background:#fff;color:#1a1a1a;border-color:#d0d0d0}
-.yao-btn.bian{background:#fef3c7;color:#92400e;border-color:#b45309}
-.hint{font-size:12px;color:#aaa;line-height:1.6}
-.calc-row{background:#f9f9f9;border-radius:8px;padding:8px 12px;font-size:12px;color:#888;line-height:1.8;margin-bottom:10px}
-.calc-row b{color:#1a1a1a;font-weight:500}
+.yao-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border:1px solid #333;border-radius:8px;cursor:pointer;background:#2c2c2c;font-size:11px;color:#666;user-select:none;-webkit-user-select:none}
+.yao-btn.yang{background:#333;color:#e8e8e8;border-color:#555}
+.yao-btn.bian{background:#3a2800;color:#d4a84b;border-color:#7a5500}
+.hint{font-size:12px;color:#666;line-height:1.6}
+.calc-row{background:#2c2c2c;border-radius:8px;padding:8px 12px;font-size:12px;color:#888;line-height:1.8;margin-bottom:10px}
+.calc-row b{color:#d4a84b;font-weight:500}
 .q-row{display:flex;gap:8px;align-items:center;margin-bottom:12px}
 .q-label{font-size:12px;color:#888;white-space:nowrap}
-.q-input{flex:1;border:1px solid #d0d0d0;border-radius:8px;padding:7px 10px;font-size:13px;background:#f9f9f9;color:#1a1a1a}
-.q-input:focus{outline:none;border-color:#888}
+.q-input{flex:1;border:1px solid #444;border-radius:8px;padding:7px 10px;font-size:13px;background:#2c2c2c;color:#e8e8e8}
+.q-input:focus{outline:none;border-color:#d4a84b}
+.q-input::placeholder{color:#555}
 .num-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 .time-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem}
 @media(max-width:540px){.time-cols{grid-template-columns:1fr}}
 .board-wrap{overflow-x:auto;margin-top:8px}
 .board{display:flex;align-items:flex-end;gap:0;min-width:620px}
 .zone{display:flex;gap:16px;align-items:flex-end}
-.board-sep{width:1px;background:#e0e0e0;margin:0 16px;align-self:stretch}
+.board-sep{width:1px;background:#444;margin:0 16px;align-self:stretch}
 .gcol{display:flex;flex-direction:column;align-items:center;width:64px}
 .gcol .g-label{font-size:11px;color:#888;text-align:center;margin-bottom:6px;width:100%}
 .gcol .g-svg-wrap{display:flex;justify-content:center;width:64px}
-.gcol .g-name{font-size:13px;font-weight:500;color:#1a1a1a;text-align:center;margin-top:6px;width:100%}
+.gcol .g-name{font-size:13px;font-weight:500;color:#e8e8e8;text-align:center;margin-top:6px;width:100%}
 .gcol .g-rel{font-size:11px;color:#888;text-align:center;margin-top:3px;min-height:16px;width:100%}
 .gcol .g-verd{font-size:12px;font-weight:500;text-align:center;margin-top:2px;min-height:18px;width:100%}
-.cg{color:#16a34a}.cr{color:#dc2626}.ca{color:#d97706}
+.cg{color:#4ade80}.cr{color:#f87171}.ca{color:#d4a84b}
 .sync-badge{font-size:12px;padding:4px 10px;border-radius:6px}
-.s-ok{background:#dcfce7;color:#166534}
-.s-err{background:#fee2e2;color:#991b1b}
-.s-ing{background:#fef9c3;color:#854d0e}
+.s-ok{background:#1a3a2a;color:#4ade80}
+.s-err{background:#3a1a1a;color:#f87171}
+.s-ing{background:#3a3000;color:#d4a84b}
 </style>
 </head>
 <body>
@@ -71,7 +74,6 @@ input:focus{outline:none;border-color:#888}
     <button class="tab" onclick="switchTab('time')">時間起卦</button>
   </div>
 
-  <!-- 手動選爻 -->
   <div class="panel active" id="panel-manual">
     <div class="sec">
       <div class="sec-title">點選六爻（初爻→上爻）— 點擊切換陰陽，右鍵／長按標記變爻（橘色）</div>
@@ -90,7 +92,6 @@ input:focus{outline:none;border-color:#888}
     <div id="manual-result"></div>
   </div>
 
-  <!-- 數字起卦 -->
   <div class="panel" id="panel-number">
     <div class="sec">
       <div class="sec-title">輸入 1–3 組數字起卦</div>
@@ -114,12 +115,11 @@ input:focus{outline:none;border-color:#888}
     <div id="number-result"></div>
   </div>
 
-  <!-- 時間起卦 -->
   <div class="panel" id="panel-time">
     <div class="time-cols">
       <div class="sec" style="margin-bottom:0">
         <div class="sec-title">現在時間起卦</div>
-        <div id="time-display" style="font-size:18px;font-weight:500;color:#1a1a1a;margin:6px 0;font-variant-numeric:tabular-nums"></div>
+        <div id="time-display" style="font-size:18px;font-weight:500;color:#f0f0f0;margin:6px 0;font-variant-numeric:tabular-nums"></div>
         <div id="time-detail" style="font-size:12px;color:#888;margin-bottom:12px"></div>
         <div class="q-row">
           <span class="q-label">問事：</span>
@@ -151,12 +151,12 @@ input:focus{outline:none;border-color:#888}
     <div class="sec">
       <div class="sec-title">時間起卦取數說明</div>
       <div class="hint">
-        <b style="color:#1a1a1a;font-weight:500">時辰對照（子時從23:00起）</b><br>
+        <b style="color:#d4a84b;font-weight:500">時辰對照（子時從23:00起）</b><br>
         子=1(23-00) 丑=2(01-02) 寅=3(03-04) 卯=4(05-06) 辰=5(07-08) 巳=6(09-10)<br>
         午=7(11-12) 未=8(13-14) 申=9(15-16) 酉=10(17-18) 戌=11(19-20) 亥=12(21-22)<br><br>
-        <b style="color:#1a1a1a;font-weight:500">上卦</b> = (年+月+日) ÷ 8 取餘　　
-        <b style="color:#1a1a1a;font-weight:500">下卦</b> = (年+月+日+時辰序) ÷ 8 取餘　　
-        <b style="color:#1a1a1a;font-weight:500">動爻</b> = (年+月+日+時辰序) ÷ 6 取餘
+        <b style="color:#d4a84b;font-weight:500">上卦</b> = (年+月+日) ÷ 8 取餘　　
+        <b style="color:#d4a84b;font-weight:500">下卦</b> = (年+月+日+時辰序) ÷ 8 取餘　　
+        <b style="color:#d4a84b;font-weight:500">動爻</b> = (年+月+日+時辰序) ÷ 6 取餘
       </div>
     </div>
     <div id="time-result"></div>
@@ -165,7 +165,6 @@ input:focus{outline:none;border-color:#888}
 
 <script>
 var WEBHOOK='https://script.google.com/macros/s/AKfycbwPMYcdGfSI7LclAL6quiAHGYVjZpyw2wkFV8SJYkzcXQDVpdTVyMjQAro6bk3t9Qwz3w/exec';
-
 var BAGUA=[
   {name:'乾',lines:[1,1,1],wx:'金',dir:'天'},{name:'兌',lines:[0,1,1],wx:'金',dir:'澤'},
   {name:'離',lines:[1,0,1],wx:'火',dir:'火'},{name:'震',lines:[0,0,1],wx:'木',dir:'雷'},
@@ -174,35 +173,31 @@ var BAGUA=[
 ];
 var GUA64={'乾乾':'乾為天','乾兌':'天澤履','乾離':'天火同人','乾震':'天雷無妄','乾巽':'天風姤','乾坎':'天水訟','乾艮':'天山遁','乾坤':'天地否','兌乾':'澤天夬','兌兌':'兌為澤','兌離':'澤火革','兌震':'澤雷隨','兌巽':'澤風大過','兌坎':'澤水困','兌艮':'澤山咸','兌坤':'澤地萃','離乾':'火天大有','離兌':'火澤睽','離離':'離為火','離震':'火雷噬嗑','離巽':'火風鼎','離坎':'火水未濟','離艮':'火山旅','離坤':'火地晉','震乾':'雷天大壯','震兌':'雷澤歸妹','震離':'雷火豐','震震':'震為雷','震巽':'雷風恆','震坎':'雷水解','震艮':'雷山小過','震坤':'雷地豫','巽乾':'風天小畜','巽兌':'風澤中孚','巽離':'風火家人','巽震':'風雷益','巽巽':'巽為風','巽坎':'風水渙','巽艮':'風山漸','巽坤':'風地觀','坎乾':'水天需','坎兌':'水澤節','坎離':'水火既濟','坎震':'水雷屯','坎巽':'水風井','坎坎':'坎為水','坎艮':'水山蹇','坎坤':'水地比','艮乾':'山天大畜','艮兌':'山澤損','艮離':'山火賁','艮震':'山雷頤','艮巽':'山風蠱','艮坎':'山水蒙','艮艮':'艮為山','艮坤':'山地剝','坤乾':'地天泰','坤兌':'地澤臨','坤離':'地火明夷','坤震':'地雷復','坤巽':'地風升','坤坎':'地水師','坤艮':'地山謙','坤坤':'坤為地'};
 function getGuaName(u,l){return GUA64[u.name+l.name]||(u.dir+l.dir);}
-var SHICHEN=['子時','丑時','寅時','卯時','辰時','巳時','午時','未時','申時','酉時','戌時','亥時'];
+var SC=['子時','丑時','寅時','卯時','辰時','巳時','午時','未時','申時','酉時','戌時','亥時'];
 function getSC(h){if(h===23)return 0;return Math.floor((h+1)/2);}
-function scNum(h){return getSC(h)+1;}
+function scN(h){return getSC(h)+1;}
 function l2g(l3){for(var i=0;i<BAGUA.length;i++){var g=BAGUA[i];if(g.lines[0]===l3[0]&&g.lines[1]===l3[1]&&g.lines[2]===l3[2])return g;}return BAGUA[7];}
 function n2g(n){return BAGUA[((n-1)%8+8)%8];}
 function wxRel(a,b){var sh={木:'火',火:'土',土:'金',金:'水',水:'木'},ke={木:'土',土:'水',水:'火',火:'金',金:'木'};if(sh[a]===b)return'我生';if(sh[b]===a)return'生我';if(ke[a]===b)return'我剋';if(ke[b]===a)return'剋我';if(a===b)return'同我';return'';}
 function verdict(rel){if(rel==='生我')return{t:'大吉',c:'cg'};if(rel==='同我')return{t:'大大吉',c:'cg'};if(rel==='我生')return{t:'小兌',c:'ca'};if(rel==='我剋')return{t:'小凶',c:'ca'};if(rel==='剋我')return{t:'大凶',c:'cr'};return{t:'',c:''};}
-
 var LH=6,GAP=5,LW=44,CW=64,SX=Math.round((CW-LW)/2);
 function svgH(n){return n*(LH+GAP)-GAP;}
 function mkSVG(yaos,bians){
   var n=yaos.length,h=svgH(n),hw=Math.round(LW*0.42);
   var s='<svg width="'+CW+'" height="'+h+'" style="display:block">';
   for(var i=n-1;i>=0;i--){var vi=(n-1)-i,y=vi*(LH+GAP);
-    if(yaos[i]===1){s+='<rect x="'+SX+'" y="'+y+'" width="'+LW+'" height="'+LH+'" rx="1" fill="#1a1a1a"/>';}
-    else{s+='<rect x="'+SX+'" y="'+y+'" width="'+hw+'" height="'+LH+'" rx="1" fill="#1a1a1a"/>';s+='<rect x="'+(SX+LW-hw)+'" y="'+y+'" width="'+hw+'" height="'+LH+'" rx="1" fill="#1a1a1a"/>';}
-    if(bians&&bians[i])s+='<circle cx="'+(SX+LW+5)+'" cy="'+(y+LH/2)+'" r="3.5" fill="#d97706"/>';
+    if(yaos[i]===1){s+='<rect x="'+SX+'" y="'+y+'" width="'+LW+'" height="'+LH+'" rx="1" fill="#e8e8e8"/>';}
+    else{s+='<rect x="'+SX+'" y="'+y+'" width="'+hw+'" height="'+LH+'" rx="1" fill="#e8e8e8"/>';s+='<rect x="'+(SX+LW-hw)+'" y="'+y+'" width="'+hw+'" height="'+LH+'" rx="1" fill="#e8e8e8"/>';}
+    if(bians&&bians[i])s+='<circle cx="'+(SX+LW+5)+'" cy="'+(y+LH/2)+'" r="3.5" fill="#d4a84b"/>';
   }
   return s+'</svg>';
 }
-function gL(l,s,n){return '<div class="gcol"><div class="g-label">'+l+'</div><div class="g-svg-wrap">'+s+'</div><div class="g-name">'+n+'</div></div>';}
-function gR(l,s,n,r,v){var vH=(v&&v.t)?'<div class="g-verd '+v.c+'">'+v.t+'</div>':'<div class="g-verd"></div>';var rH=r?'<div class="g-rel">'+r+'</div>':'<div class="g-rel"></div>';return '<div class="gcol"><div class="g-label">'+l+'</div><div class="g-svg-wrap">'+s+'</div><div class="g-name">'+n+'</div>'+rH+vH+'</div>';}
-
+function gcolL(l,s,n){return '<div class="gcol"><div class="g-label">'+l+'</div><div class="g-svg-wrap">'+s+'</div><div class="g-name">'+n+'</div></div>';}
+function gcolR(l,s,n,r,v){var vH=(v&&v.t)?'<div class="g-verd '+v.c+'">'+v.t+'</div>':'<div class="g-verd"></div>';var rH=r?'<div class="g-rel">'+r+'</div>':'<div class="g-rel"></div>';return '<div class="gcol"><div class="g-label">'+l+'</div><div class="g-svg-wrap">'+s+'</div><div class="g-name">'+n+'</div>'+rH+vH+'</div>';}
 function setBadge(id,cls,txt){var el=document.getElementById(id);if(!el)return;el.className='sync-badge '+(cls||'');el.textContent=txt||'';}
 function setBtn(id,dis){var el=document.getElementById(id);if(el)el.disabled=dis;}
-
 var lastResults={};
 function pad(v){return String(v).padStart(2,'0');}
-
 function doSave(key){
   var rKey=(key==='time-now'||key==='time-custom')?'time':key;
   var result=lastResults[rKey];
@@ -212,18 +207,14 @@ function doSave(key){
   var payload={
     timestamp:result.timestamp,method:result.method,question:result.question,
     benName:result.benName,huName:result.huName,bianName:result.bianName,
-    ti_name:result.ti.name,ti_wx:result.ti.wx,
-    yong_name:result.yong.name,yong_wx:result.yong.wx,
-    huL_name:result.huL.name,huL_wx:result.huL.wx,
-    huU_name:result.huU.name,huU_wx:result.huU.wx,
-    bL_name:result.bL.name,bL_wx:result.bL.wx,
-    yao6:result.yao6,bian6:result.bian6
+    ti_name:result.ti.name,ti_wx:result.ti.wx,yong_name:result.yong.name,yong_wx:result.yong.wx,
+    huL_name:result.huL.name,huL_wx:result.huL.wx,huU_name:result.huU.name,huU_wx:result.huU.wx,
+    bL_name:result.bL.name,bL_wx:result.bL.wx,yao6:result.yao6,bian6:result.bian6
   };
   fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
     .then(function(){setBadge(badgeId,'s-ok','已儲存 ✓');setBtn(btnId,false);})
     .catch(function(){setBadge(badgeId,'s-err','失敗，請重試');setBtn(btnId,false);});
 }
-
 function renderResult(yao6,bian6,container,method,question){
   var gLL=l2g([yao6[0],yao6[1],yao6[2]]),gU=l2g([yao6[3],yao6[4],yao6[5]]);
   var huL=l2g([yao6[1],yao6[2],yao6[3]]),huU=l2g([yao6[2],yao6[3],yao6[4]]);
@@ -241,15 +232,14 @@ function renderResult(yao6,bian6,container,method,question){
   if(container==='manual'){setBtn('save-btn-manual',false);setBadge('save-badge-manual','','');}
   else if(container==='number'){setBtn('save-btn-number',false);setBadge('save-badge-number','','');}
   else if(container==='time'){setBtn('save-btn-time-now',false);setBadge('save-badge-time-now','','');setBtn('save-btn-time-custom',false);setBadge('save-badge-time-custom','','');}
-  var lz='<div class="zone">'+gL('本',mkSVG(yao6,bian6),benName)+gL('互',mkSVG(huDisp,null),huName)+gL('變',mkSVG(bYao,null),bianName)+'</div>';
-  var rz='<div class="zone">'+gR('體',mkSVG(gLL.lines,null),gLL.name+gLL.wx,'',null)+gR('用',mkSVG(gU.lines,null),gU.name+gU.wx,rYong,vYong)+gR('下互',mkSVG(huL.lines,null),huL.name+huL.wx,rHuL,vHuL)+gR('上互',mkSVG(huU.lines,null),huU.name+huU.wx,rHuU,vHuU)+gR('變',mkSVG(bLL.lines,null),bLL.name+bLL.wx,rB,vB)+'</div>';
+  var lz='<div class="zone">'+gcolL('本',mkSVG(yao6,bian6),benName)+gcolL('互',mkSVG(huDisp,null),huName)+gcolL('變',mkSVG(bYao,null),bianName)+'</div>';
+  var rz='<div class="zone">'+gcolR('體',mkSVG(gLL.lines,null),gLL.name+gLL.wx,'',null)+gcolR('用',mkSVG(gU.lines,null),gU.name+gU.wx,rYong,vYong)+gcolR('下互',mkSVG(huL.lines,null),huL.name+huL.wx,rHuL,vHuL)+gcolR('上互',mkSVG(huU.lines,null),huU.name+huU.wx,rHuU,vHuU)+gcolR('變',mkSVG(bLL.lines,null),bLL.name+bLL.wx,rB,vB)+'</div>';
   var qTag=q?'<div style="font-size:13px;color:#888;margin-bottom:8px">問事：'+q+'</div>':'';
   document.getElementById(container).innerHTML='<div class="sec">'+qTag+'<div class="sec-title">卦象結果 — '+method+'</div><div class="board-wrap"><div class="board">'+lz+'<div class="board-sep"></div>'+rz+'</div></div></div>';
 }
-
 function calcFromDate(dt,question){
   var y=dt.getFullYear(),mo=dt.getMonth()+1,d=dt.getDate(),h=dt.getHours();
-  var sc=scNum(h),scName=SHICHEN[getSC(h)];
+  var sc=scN(h),scName=SC[getSC(h)];
   var uN=((y+mo+d)%8)||8,lN=((y+mo+d+sc)%8)||8,dong=(y+mo+d+sc)%6||6;
   var ug=n2g(uN),lg=n2g(lN);
   var y6=lg.lines.concat(ug.lines),b6=[false,false,false,false,false,false];b6[dong-1]=true;
@@ -263,7 +253,7 @@ function calcTimeCustom(){var val=document.getElementById('custom-time').value;i
 function updateClock(){
   var el=document.getElementById('time-display');if(!el)return;
   var n=new Date();el.textContent=n.getFullYear()+'年'+(n.getMonth()+1)+'月'+n.getDate()+'日 '+pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());
-  var det=document.getElementById('time-detail');if(det)det.textContent='時辰：'+SHICHEN[getSC(n.getHours())]+'（序'+scNum(n.getHours())+'）';
+  var det=document.getElementById('time-detail');if(det)det.textContent='時辰：'+SC[getSC(n.getHours())]+'（序'+scN(n.getHours())+'）';
 }
 var mYaos=[1,1,0,0,0,1],mBian=[false,false,false,false,false,false];
 function initManual(){
@@ -271,7 +261,8 @@ function initManual(){
   for(var i=0;i<6;i++){(function(idx){
     var y=mYaos[idx],bv=mBian[idx],btn=document.createElement('div');
     btn.className='yao-btn'+(y?' yang':'')+(bv?' bian':'');
-    var lh=y?'<div style="width:28px;height:5px;border-radius:1px;background:#1a1a1a"></div>':'<div style="display:flex;gap:4px"><div style="width:11px;height:5px;border-radius:1px;background:'+(bv?'#92400e':'#1a1a1a')+'"></div><div style="width:11px;height:5px;border-radius:1px;background:'+(bv?'#92400e':'#1a1a1a')+'"></div></div>';
+    var lineColor=bv?'#d4a84b':'#e8e8e8';
+    var lh=y?'<div style="width:28px;height:5px;border-radius:1px;background:'+lineColor+'"></div>':'<div style="display:flex;gap:4px"><div style="width:11px;height:5px;border-radius:1px;background:'+lineColor+'"></div><div style="width:11px;height:5px;border-radius:1px;background:'+lineColor+'"></div></div>';
     btn.innerHTML='<span>第'+(idx+1)+'爻</span>'+lh+'<span>'+(y?'陽':'陰')+(bv?'·變':'')+'</span>';
     btn.onclick=function(){mYaos[idx]=1-mYaos[idx];initManual();};
     btn.oncontextmenu=function(e){e.preventDefault();mBian[idx]=!mBian[idx];initManual();};
