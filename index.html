@@ -178,7 +178,7 @@ input::placeholder{color:#555}
 </div>
 
 <script>
-var WEBHOOK='https://script.google.com/macros/s/AKfycbzjhBFdSxaqjSyDT-EuiwZdcL8aVr1TnUHv_e3Css9SZg8Qaq2HV5jv1tJ0Ix9w0AL6/exec';
+var WEBHOOK='https://script.google.com/macros/s/AKfycbxMCnUPPXS4yqjeJJmqDKTwDSbBiCJo8F8VCGuQ1Uvc4kDeVpq60Xsf5oMMCavpne3NQw/exec';
 var BAGUA=[
   {name:'乾',lines:[1,1,1],wx:'金',dir:'天'},{name:'兌',lines:[0,1,1],wx:'金',dir:'澤'},
   {name:'離',lines:[1,0,1],wx:'火',dir:'火'},{name:'震',lines:[0,0,1],wx:'木',dir:'雷'},
@@ -193,7 +193,7 @@ function scN(h){return getSC(h)+1;}
 function l2g(l3){for(var i=0;i<BAGUA.length;i++){var g=BAGUA[i];if(g.lines[0]===l3[0]&&g.lines[1]===l3[1]&&g.lines[2]===l3[2])return g;}return BAGUA[7];}
 function n2g(n){return BAGUA[((n-1)%8+8)%8];}
 function wxRel(a,b){var sh={木:'火',火:'土',土:'金',金:'水',水:'木'},ke={木:'土',土:'水',水:'火',火:'金',金:'木'};if(sh[a]===b)return'我生';if(sh[b]===a)return'生我';if(ke[a]===b)return'我剋';if(ke[b]===a)return'剋我';if(a===b)return'同我';return'';}
-function verdict(rel){if(rel==='生我')return{t:'大吉',c:'cg'};if(rel==='同我')return{t:'大大吉',c:'cg'};if(rel==='我生')return{t:'小凶',c:'ca'};if(rel==='我剋')return{t:'小凶',c:'ca'};if(rel==='剋我')return{t:'大凶',c:'cr'};return{t:'',c:''};}
+function verdict(rel){if(rel==='生我')return{t:'大吉',c:'cg'};if(rel==='同我')return{t:'大大吉',c:'cg'};if(rel==='我生')return{t:'小凶',c:'ca'};if(rel==='我剋')return{t:'小吉',c:'cg'};if(rel==='剋我')return{t:'大凶',c:'cr'};return{t:'',c:''};}
 var LH=6,GAP=5,LW=44,CW=64,SX=Math.round((CW-LW)/2);
 function svgH(n){return n*(LH+GAP)-GAP;}
 function mkSVG(yaos,bians){
@@ -237,8 +237,22 @@ function renderResult(yao6,bian6,container,method,question,detail){
   var bLL=l2g([bYao[0],bYao[1],bYao[2]]),bU=l2g([bYao[3],bYao[4],bYao[5]]);
   var huDisp=[huL.lines[0],huL.lines[1],huL.lines[2],huU.lines[0],huU.lines[1],huU.lines[2]];
   var benName=getGuaName(gU,gLL),huName=getGuaName(huU,huL),bianName=getGuaName(bU,bLL);
-  var ti=gLL,yong=gU;
-  var rYong=wxRel(ti.wx,yong.wx),rHuL=wxRel(ti.wx,huL.wx),rHuU=wxRel(ti.wx,huU.wx),rB=wxRel(ti.wx,bLL.wx);
+
+  // 體用判斷：看變爻在哪半邊
+  var bianInLower=bian6[0]||bian6[1]||bian6[2]; // 變爻在下卦
+  var bianInUpper=bian6[3]||bian6[4]||bian6[5]; // 變爻在上卦
+  var ti, yong, bianGua;
+  if(bianInLower){
+    // 變爻在下卦 → 體=上卦，用=下卦，變=變卦下卦
+    ti=gU; yong=gLL; bianGua=bLL;
+  } else if(bianInUpper){
+    // 變爻在上卦 → 體=下卦，用=上卦，變=變卦上卦
+    ti=gLL; yong=gU; bianGua=bU;
+  } else {
+    // 無變爻（手動模式無動爻時）→ 預設體=下卦，用=上卦
+    ti=gLL; yong=gU; bianGua=bLL;
+  }
+  var rYong=wxRel(ti.wx,yong.wx),rHuL=wxRel(ti.wx,huL.wx),rHuU=wxRel(ti.wx,huU.wx),rB=wxRel(ti.wx,bianGua.wx);
   var vYong=verdict(rYong),vHuL=verdict(rHuL),vHuU=verdict(rHuU),vB=verdict(rB);
   var q=question||'';
   var now=new Date();
@@ -261,7 +275,7 @@ function renderResult(yao6,bian6,container,method,question,detail){
     var dlt=document.getElementById('dl-btn-time');if(dlt)dlt.style.display='inline-block';
   }
   var lz='<div class="zone">'+gcolL('本',mkSVG(yao6,bian6),benName)+gcolL('互',mkSVG(huDisp,null),huName)+gcolL('變',mkSVG(bYao,null),bianName)+'</div>';
-  var rz='<div class="zone">'+gcolR('體',mkSVG(gLL.lines,null),gLL.name+gLL.wx,'',null)+gcolR('用',mkSVG(gU.lines,null),gU.name+gU.wx,rYong,vYong)+gcolR('下互',mkSVG(huL.lines,null),huL.name+huL.wx,rHuL,vHuL)+gcolR('上互',mkSVG(huU.lines,null),huU.name+huU.wx,rHuU,vHuU)+gcolR('變',mkSVG(bLL.lines,null),bLL.name+bLL.wx,rB,vB)+'</div>';
+  var rz='<div class="zone">'+gcolR('體',mkSVG(ti.lines,null),ti.name+ti.wx,'',null)+gcolR('用',mkSVG(yong.lines,null),yong.name+yong.wx,rYong,vYong)+gcolR('下互',mkSVG(huL.lines,null),huL.name+huL.wx,rHuL,vHuL)+gcolR('上互',mkSVG(huU.lines,null),huU.name+huU.wx,rHuU,vHuU)+gcolR('變',mkSVG(bianGua.lines,null),bianGua.name+bianGua.wx,rB,vB)+'</div>';
   var qTag=q?'<div style="font-size:13px;color:#888;margin-bottom:8px">問事：'+q+'</div>':'';
   document.getElementById(container).innerHTML='<div class="sec">'+qTag+'<div class="sec-title">卦象結果 — '+method+'</div><div class="board-wrap"><div class="board">'+lz+'<div class="board-sep"></div>'+rz+'</div></div></div>';
 }
