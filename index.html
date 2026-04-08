@@ -178,7 +178,7 @@ input::placeholder{color:#555}
 </div>
 
 <script>
-var WEBHOOK='https://script.google.com/macros/s/AKfycbw_Z0FNI4Ubpm6QSSeyJYcGXjayNAFUVdfEw1VvU2cdDmrf6RgEKMabRjbJgalsi_9qlA/exec';
+var WEBHOOK='https://script.google.com/macros/s/AKfycby-BGuFiLQy82__KRKpLGtVBC3btw0SpBlyuM8iTChGiMKys_um-yIti6-D8sNXPALYYQ/exec';
 var BAGUA=[
   {name:'乾',lines:[1,1,1],wx:'金',dir:'天'},{name:'兌',lines:[0,1,1],wx:'金',dir:'澤'},
   {name:'離',lines:[1,0,1],wx:'火',dir:'火'},{name:'震',lines:[0,0,1],wx:'木',dir:'雷'},
@@ -342,7 +342,9 @@ function downloadImg(containerId){
     backgroundColor:'#242424',
     scale:2,
     useCORS:true,
-    logging:false
+    logging:false,
+    windowWidth:target.scrollWidth,
+    width:target.scrollWidth
   }).then(function(canvas){
     var link=document.createElement('a');
     var now=new Date();
@@ -361,6 +363,8 @@ function downloadImg(containerId){
 var _pendingSaveKey = null;
 
 function openSaveModal(key){
+  var rKey=(key==='time-now'||key==='time-custom')?'time-result':(key+'-result');
+  if(!lastResults[rKey]){alert('請先起卦');return;}
   _pendingSaveKey = key;
   document.getElementById('pw-input').value='';
   document.getElementById('pw-err').textContent='';
