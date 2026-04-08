@@ -342,9 +342,9 @@ function downloadImg(containerId){
   var zones=board.querySelectorAll('.zone');
   var lastZone=zones[zones.length-1];
   var lastRect=lastZone.getBoundingClientRect();
-  var PAD=20;
-  var actualW=Math.round(lastRect.right - boardRect.left) + PAD*2;
-  var captureH=board.scrollHeight + PAD*2;
+  // 實際內容寬度 = 最後zone右邊界 - board左邊界
+  var actualW=Math.round(lastRect.right - boardRect.left);
+  var captureH=board.scrollHeight;
   html2canvas(board,{
     backgroundColor:'#242424',
     scale:2,
@@ -353,7 +353,7 @@ function downloadImg(containerId){
     width:actualW,
     height:captureH,
     x:0,
-    y:-PAD
+    y:0
   }).then(function(canvas){
     var link=document.createElement('a');
     var now=new Date();
