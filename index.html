@@ -168,7 +168,7 @@ input::placeholder{color:#555}
 </div>
 
 <script>
-var WEBHOOK='https://script.google.com/macros/s/AKfycbzSIiaVinVvtzfHZ1-QTRPJvOZs5i4WZ_Z4en9uh3S3obUo6w1aU71g9Pt3U6F79GdBcQ/exec';
+var WEBHOOK='https://script.google.com/macros/s/AKfycbwiTciQ37PKJpzxaHDCxfHj4JdJhNNR0pbJDcPaAhyhGg7Dk14BRkTT4DeTAs14mVMb8Q/exec';
 var BAGUA=[
   {name:'乾',lines:[1,1,1],wx:'金',dir:'天'},{name:'兌',lines:[0,1,1],wx:'金',dir:'澤'},
   {name:'離',lines:[1,0,1],wx:'火',dir:'火'},{name:'震',lines:[0,0,1],wx:'木',dir:'雷'},
@@ -313,17 +313,22 @@ initManual();setInterval(updateClock,1000);updateClock();
 
 function downloadImg(containerId){
   var el=document.getElementById(containerId);
-  if(!el||!el.firstChild){alert('請先起卦');return;}
-  var btn=document.getElementById('dl-btn-'+containerId.replace('-result',''));
+  if(!el||!el.querySelector('.sec')){alert('請先起卦');return;}
+  // 截取卦象結果的 .sec 區塊
+  var target=el.querySelector('.sec');
+  var btnKey=containerId==='time-result'?'time':containerId.replace('-result','');
+  var btn=document.getElementById('dl-btn-'+btnKey);
   if(btn){btn.textContent='截圖中...';}
-  html2canvas(el.firstChild,{
+  html2canvas(target,{
     backgroundColor:'#242424',
     scale:2,
-    useCORS:true
+    useCORS:true,
+    logging:false
   }).then(function(canvas){
     var link=document.createElement('a');
     var now=new Date();
-    var fn='梅花易數_'+now.getFullYear()+(now.getMonth()+1)+now.getDate()+'_'+now.getHours()+now.getMinutes()+'.png';
+    var pad=function(v){return String(v).padStart(2,'0');};
+    var fn='梅花易數_'+now.getFullYear()+pad(now.getMonth()+1)+pad(now.getDate())+'_'+pad(now.getHours())+pad(now.getMinutes())+'.png';
     link.download=fn;
     link.href=canvas.toDataURL('image/png');
     link.click();
