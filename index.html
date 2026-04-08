@@ -77,17 +77,17 @@ input::placeholder{color:#555}
 <div class="app">
   <div class="header">
     <h1>梅花易數起卦工具</h1>
-    <p>本卦 · 互卦 · 變卦 · 體用五行生剋</p>
+    <p>狐狸屋謹製</p>
   </div>
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('manual')">手動選爻</button>
+    <button class="tab active" onclick="switchTab('manual')">手動排爻</button>
     <button class="tab" onclick="switchTab('number')">數字起卦</button>
     <button class="tab" onclick="switchTab('time')">時間起卦</button>
   </div>
 
   <div class="panel active" id="panel-manual">
     <div class="sec">
-      <div class="sec-title">點選六爻（初爻→上爻）— 點擊切換陰陽，右鍵／長按標記變爻（橘色）</div>
+      <div class="sec-title">點選六爻（初爻→上爻）— 點擊切換陰陽，右鍵／長按標記動爻（橘色）</div>
       <div class="yao-grid" id="manual-yaos"></div>
       <div class="q-row" style="margin-top:12px">
         <span class="q-label">問事：</span>
@@ -131,7 +131,7 @@ input::placeholder{color:#555}
   <div class="panel" id="panel-time">
     <div class="time-cols">
       <div class="sec" style="margin-bottom:0">
-        <div class="sec-title">現在時間起卦</div>
+        <div class="sec-title">現在時間起卦（國曆計算）</div>
         <div id="time-display" style="font-size:18px;font-weight:500;color:#f0f0f0;margin:6px 0;font-variant-numeric:tabular-nums"></div>
         <div id="time-detail" style="font-size:12px;color:#888;margin-bottom:12px"></div>
         <div class="q-row">
@@ -139,13 +139,13 @@ input::placeholder{color:#555}
           <input class="q-input" type="text" id="q-time-now" placeholder="輸入問事概要（可留空）">
         </div>
         <div class="flex-row">
-          <button class="btn pri" onclick="calcTimeNow()">以現在時間起卦</button>
+          <button class="btn pri" onclick="calcTimeNow()">以現在時間起卦（國曆計算）</button>
           <button class="btn green" id="save-btn-time-now" disabled onclick="openSaveModal('time-now')">儲存/上傳</button>
           <span id="save-badge-time-now" class="sync-badge"></span>
         </div>
       </div>
       <div class="sec" style="margin-bottom:0">
-        <div class="sec-title">指定時間起卦</div>
+        <div class="sec-title">指定時間起卦（國曆計算）</div>
         <div style="margin-bottom:10px">
           <div class="field-label">選擇時間</div>
           <input type="datetime-local" id="custom-time">
@@ -286,13 +286,13 @@ function calcFromDate(dt,question,methodLabel,detailLabel){
   var ug=n2g(uN),lg=n2g(lN);
   var y6=lg.lines.concat(ug.lines),b6=[false,false,false,false,false,false];b6[dong-1]=true;
   var s1=y+mo+d,s2=s1+sc;
-  var calc='<div class="calc-row">上卦：'+s1+' ÷ 8 餘 <b>'+uN+'</b> → <b>'+ug.name+'('+ug.wx+')</b>　下卦：'+s2+' ÷ 8 餘 <b>'+lN+'</b> → <b>'+lg.name+'('+lg.wx+')</b>　動爻：'+s2+' ÷ 6 餘 <b>'+dong+'</b> → 第 <b>'+dong+'</b> 爻動</div>';
+  var calc='<div class="calc-row">上卦：'+s1+' ÷ 8 餘 <b>'+(s1%8)+'</b> → <b>'+ug.name+'('+ug.wx+')</b>　下卦：'+s2+' ÷ 8 餘 <b>'+(s2%8)+'</b> → <b>'+lg.name+'('+lg.wx+')</b>　動爻：'+s2+' ÷ 6 餘 <b>'+(s2%6)+'</b> → 第 <b>'+dong+'</b> 爻動</div>';
   var dtStr=y+'/'+mo+'/'+d+' '+pad(dt.getHours())+':'+pad(dt.getMinutes());
   renderResult(y6,b6,'time-result',methodLabel||'時間起卦',question,detailLabel||dtStr);
   document.getElementById('time-result').innerHTML=calc+document.getElementById('time-result').innerHTML;
 }
-function calcTimeNow(){var n=new Date();calcFromDate(n,document.getElementById('q-time-now').value,'現在時間起卦');}
-function calcTimeCustom(){var val=document.getElementById('custom-time').value;if(!val){alert('請先選擇指定時間');return;}calcFromDate(new Date(val),document.getElementById('q-time-custom').value,'指定時間起卦');}
+function calcTimeNow(){var n=new Date();calcFromDate(n,document.getElementById('q-time-now').value,'現在時間起卦（國曆計算）');}
+function calcTimeCustom(){var val=document.getElementById('custom-time').value;if(!val){alert('請先選擇指定時間');return;}calcFromDate(new Date(val),document.getElementById('q-time-custom').value,'指定時間起卦（國曆計算）');}
 function updateClock(){
   var el=document.getElementById('time-display');if(!el)return;
   var n=new Date();el.textContent=n.getFullYear()+'年'+(n.getMonth()+1)+'月'+n.getDate()+'日 '+pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());
@@ -306,7 +306,7 @@ function initManual(){
     btn.className='yao-btn'+(y?' yang':'')+(bv?' bian':'');
     var lineColor=bv?'#d4a84b':'#e8e8e8';
     var lh=y?'<div style="width:28px;height:5px;border-radius:1px;background:'+lineColor+'"></div>':'<div style="display:flex;gap:4px"><div style="width:11px;height:5px;border-radius:1px;background:'+lineColor+'"></div><div style="width:11px;height:5px;border-radius:1px;background:'+lineColor+'"></div></div>';
-    btn.innerHTML='<span>第'+(idx+1)+'爻</span>'+lh+'<span>'+(y?'陽':'陰')+(bv?'·變':'')+'</span>';
+    btn.innerHTML='<span>'+(idx===0?'初爻':idx===5?'上爻':'第'+(idx+1)+'爻')+'</span>'+lh+'<span>'+(y?'陽':'陰')+(bv?'·變':'')+'</span>';
     btn.onclick=function(){mYaos[idx]=1-mYaos[idx];initManual();};
     btn.oncontextmenu=function(e){e.preventDefault();mBian[idx]=!mBian[idx];initManual();};
     var t;var longPressed=false;
@@ -323,7 +323,7 @@ function initManual(){
     g.appendChild(btn);
   })(i);}
 }
-function calcManual(){renderResult(mYaos.slice(),mBian.slice(),'manual-result','手動選爻',document.getElementById('q-manual').value);}
+function calcManual(){renderResult(mYaos.slice(),mBian.slice(),'manual-result','手動排爻',document.getElementById('q-manual').value);}
 function resetManual(){mYaos=[1,1,1,0,1,0];mBian=[false,false,false,false,false,false];initManual();document.getElementById('manual-result').innerHTML='';document.getElementById('q-manual').value='';setBtn('save-btn-manual',true);setBadge('save-badge-manual','','');}
 function clearNum(){['n1','n2','n3'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('num-calc-preview').innerHTML='';document.getElementById('q-number').value='';}
 function calcNumber(){
@@ -331,7 +331,7 @@ function calcNumber(){
   if(!n1){alert('請至少輸入上卦數');return;}
   var upper=((n1-1)%8)+1,lower=n2?(((n2-1)%8)+1):((n1%8)||8),dong=n3?(((n3-1)%6)+1):(((n1+(n2||0))%6)||6);
   var ug=n2g(upper),lg=n2g(lower),y6=lg.lines.concat(ug.lines),b6=[false,false,false,false,false,false];b6[dong-1]=true;
-  document.getElementById('num-calc-preview').innerHTML='<div class="calc-row" style="margin-bottom:10px">上卦：'+n1+' ÷ 8 餘 <b>'+upper+'</b> → <b>'+ug.name+'('+ug.wx+')</b>　下卦：'+(n2?n2+' ÷ 8 餘 <b>'+lower:'同上 <b>'+lower)+'</b> → <b>'+lg.name+'('+lg.wx+')</b>　動爻：'+(n3?n3:n1+(n2?'+'+n2:''))+' ÷ 6 餘 <b>'+dong+'</b> → 第 <b>'+dong+'</b> 爻動</div>';
+  document.getElementById('num-calc-preview').innerHTML='<div class="calc-row" style="margin-bottom:10px">上卦：'+n1+' ÷ 8 餘 <b>'+(n1%8)+'</b> → <b>'+ug.name+'('+ug.wx+')</b>　下卦：'+(n2?n2+' ÷ 8 餘 <b>'+(n2%8)+'</b>':'同上 <b>'+lower)+'</b> → <b>'+lg.name+'('+lg.wx+')</b>　動爻：'+(n3?n3:n1+(n2?'+'+n2:''))+' ÷ 6 餘 <b>'+(n3?n3%6:(n1+(n2||0))%6)+'</b> → 第 <b>'+dong+'</b> 爻動</div>';
   renderResult(y6,b6,'number-result','數字起卦',document.getElementById('q-number').value,n1+(n2?','+n2:'')+(n3?','+n3:''));
 }
 function switchTab(id){
