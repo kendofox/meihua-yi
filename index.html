@@ -332,22 +332,24 @@ initManual();setInterval(updateClock,1000);updateClock();
 
 function downloadImg(containerId){
   var el=document.getElementById(containerId);
-  if(!el||!el.querySelector('.sec')){alert('請先起卦');return;}
-  // 截取卦象結果的 .sec 區塊
-  var target=el.querySelector('.sec');
+  if(!el||!el.querySelector('.board')){alert('請先起卦');return;}
   var btnKey=containerId==='time-result'?'time':containerId.replace('-result','');
   var btn=document.getElementById('dl-btn-'+btnKey);
   if(btn){btn.textContent='截圖中...';}
-  // 先取得 .board 的實際寬度來決定截圖寬度
-  var board = target.querySelector('.board');
-  var captureW = board ? board.scrollWidth + 48 : target.scrollWidth;
-  html2canvas(target,{
+  // 直接截 .board，左右各加 20px padding（跟卦圖邊距一致）
+  var board=el.querySelector('.board');
+  var PAD=20;
+  var captureW=board.scrollWidth + PAD*2;
+  var captureH=board.scrollHeight + PAD*2;
+  html2canvas(board,{
     backgroundColor:'#242424',
     scale:2,
     useCORS:true,
     logging:false,
     width:captureW,
-    windowWidth:captureW
+    height:captureH,
+    x:-PAD,
+    y:-PAD
   }).then(function(canvas){
     var link=document.createElement('a');
     var now=new Date();
