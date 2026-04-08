@@ -295,8 +295,17 @@ function initManual(){
     btn.innerHTML='<span>第'+(idx+1)+'爻</span>'+lh+'<span>'+(y?'陽':'陰')+(bv?'·變':'')+'</span>';
     btn.onclick=function(){mYaos[idx]=1-mYaos[idx];initManual();};
     btn.oncontextmenu=function(e){e.preventDefault();mBian[idx]=!mBian[idx];initManual();};
-    var t;btn.addEventListener('touchstart',function(){t=setTimeout(function(){mBian[idx]=!mBian[idx];initManual();},600);},{passive:true});
+    var t;var longPressed=false;
+    btn.addEventListener('touchstart',function(){
+      longPressed=false;
+      t=setTimeout(function(){
+        longPressed=true;
+        mBian[idx]=!mBian[idx];
+        initManual();
+      },500);
+    },{passive:true});
     btn.addEventListener('touchend',function(){clearTimeout(t);},{passive:true});
+    btn.addEventListener('touchmove',function(){clearTimeout(t);},{passive:true});
     g.appendChild(btn);
   })(i);}
 }
@@ -348,6 +357,33 @@ function downloadImg(containerId){
     if(btn){btn.textContent='⬇ 下載圖片';}
   });
 }
+
+var _pendingSaveKey = null;
+
+function openSaveModal(key){
+  _pendingSaveKey = key;
+  document.getElementById('pw-input').value='';
+  document.getElementById('pw-err').textContent='';
+  document.getElementById('pw-modal').classList.add('show');
+  setTimeout(function(){document.getElementById('pw-input').focus();},100);
+}
+
+function closeModal(){
+  document.getElementById('pw-modal').classList.remove('show');
+  _pendingSaveKey = null;
+}
+
+function submitPw(){
+  var pw = document.getElementById('pw-input').value;
+  if(pw === '700315'){
+    closeModal();
+    doSave(_pendingSaveKey);
+  } else {
+    document.getElementById('pw-err').textContent = '密碼錯誤，再試試看 🦊';
+    document.getElementById('pw-input').value='';
+    document.getElementById('pw-input').focus();
+  }
+}
 </script>
 
 <div class="modal-overlay" id="pw-modal">
@@ -362,5 +398,11 @@ function downloadImg(containerId){
     </div>
   </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  var inp=document.getElementById('pw-input');
+  if(inp) inp.addEventListener('keydown',function(e){if(e.key==='Enter')submitPw();});
+});
+</script>
 </body>
 </html>
