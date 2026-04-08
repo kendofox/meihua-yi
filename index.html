@@ -336,19 +336,23 @@ function downloadImg(containerId){
   var btnKey=containerId==='time-result'?'time':containerId.replace('-result','');
   var btn=document.getElementById('dl-btn-'+btnKey);
   if(btn){btn.textContent='截圖中...';}
-  // 直接截 .board，左右各加 20px padding（跟卦圖邊距一致）
+  // 計算實際內容寬度（最後一個 zone 的右邊界）
   var board=el.querySelector('.board');
+  var boardRect=board.getBoundingClientRect();
+  var zones=board.querySelectorAll('.zone');
+  var lastZone=zones[zones.length-1];
+  var lastRect=lastZone.getBoundingClientRect();
   var PAD=20;
-  var captureW=board.scrollWidth + PAD*2;
+  var actualW=Math.round(lastRect.right - boardRect.left) + PAD;
   var captureH=board.scrollHeight + PAD*2;
   html2canvas(board,{
     backgroundColor:'#242424',
     scale:2,
     useCORS:true,
     logging:false,
-    width:captureW,
+    width:actualW,
     height:captureH,
-    x:-PAD,
+    x:0,
     y:-PAD
   }).then(function(canvas){
     var link=document.createElement('a');
