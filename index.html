@@ -343,7 +343,7 @@ function downloadImg(containerId){
   var lastZone=zones[zones.length-1];
   var lastRect=lastZone.getBoundingClientRect();
   var PAD=20;
-  var actualW=Math.round(lastRect.right - boardRect.left) + PAD;
+  var actualW=Math.round(lastRect.right - boardRect.left) + PAD*2;
   var captureH=board.scrollHeight + PAD*2;
   html2canvas(board,{
     backgroundColor:'#242424',
