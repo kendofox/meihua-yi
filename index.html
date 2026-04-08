@@ -211,8 +211,8 @@ function doSave(key){
     huL_name:result.huL.name,huL_wx:result.huL.wx,huU_name:result.huU.name,huU_wx:result.huU.wx,
     bL_name:result.bL.name,bL_wx:result.bL.wx,yao6:result.yao6,bian6:result.bian6
   };
-  fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
-    .then(function(){setBadge(badgeId,'s-ok','已儲存 ✓');setBtn(btnId,false);})
+  fetch(WEBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
+    .then(function(){setBadge(badgeId,'s-ok','已送出，請確認試算表 ✓');setBtn(btnId,false);})
     .catch(function(){setBadge(badgeId,'s-err','失敗，請重試');setBtn(btnId,false);});
 }
 function renderResult(yao6,bian6,container,method,question){
