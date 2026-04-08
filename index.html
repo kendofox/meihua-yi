@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>梅花易數起卦工具</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f5;color:#1a1a1a;min-height:100vh}
+.app{padding:1rem;max-width:1000px;margin:0 auto}
+.header{padding:1.2rem 0 1rem}
+.header h1{font-size:20px;font-weight:600;color:#1a1a1a}
+.header p{font-size:13px;color:#888;margin-top:3px}
+.tabs{display:flex;gap:4px;margin-bottom:1rem;border-bottom:1px solid #e0e0e0}
+.tab{padding:8px 16px;font-size:14px;cursor:pointer;border:none;background:none;color:#888;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab.active{color:#1a1a1a;border-bottom-color:#1a1a1a;font-weight:500}
+.panel{display:none}.panel.active{display:block}
+.sec{background:#fff;border:1px solid #e8e8e8;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem}
+.sec-title{font-size:12px;font-weight:500;color:#888;margin-bottom:12px}
+.btn{padding:8px 16px;border:1px solid #d0d0d0;border-radius:8px;cursor:pointer;font-size:14px;background:#fff;color:#1a1a1a}
+.btn:hover{background:#f5f5f5}
+.btn.pri{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.btn.pri:hover{background:#333}
+.btn.green{background:#16a34a;color:#fff;border-color:#16a34a;font-size:13px;padding:7px 14px}
+.btn.green:hover{background:#15803d}
+.btn.green:disabled{background:#d1fae5;color:#a7f3d0;border-color:#d1fae5;cursor:default}
+.flex-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.field-label{font-size:12px;color:#888;margin-bottom:4px}
+input[type=number],input[type=text],input[type=datetime-local]{border:1px solid #d0d0d0;border-radius:8px;padding:8px 10px;font-size:14px;background:#fff;color:#1a1a1a;width:100%}
+input:focus{outline:none;border-color:#888}
+.yao-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:8px 0}
+.yao-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border:1px solid #e0e0e0;border-radius:8px;cursor:pointer;background:#f9f9f9;font-size:11px;color:#888;user-select:none;-webkit-user-select:none}
+.yao-btn.yang{background:#fff;color:#1a1a1a;border-color:#d0d0d0}
+.yao-btn.bian{background:#fef3c7;color:#92400e;border-color:#b45309}
+.hint{font-size:12px;color:#aaa;line-height:1.6}
+.calc-row{background:#f9f9f9;border-radius:8px;padding:8px 12px;font-size:12px;color:#888;line-height:1.8;margin-bottom:10px}
+.calc-row b{color:#1a1a1a;font-weight:500}
+.q-row{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.q-label{font-size:12px;color:#888;white-space:nowrap}
+.q-input{flex:1;border:1px solid #d0d0d0;border-radius:8px;padding:7px 10px;font-size:13px;background:#f9f9f9;color:#1a1a1a}
+.q-input:focus{outline:none;border-color:#888}
+.num-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.time-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem}
+@media(max-width:540px){.time-cols{grid-template-columns:1fr}}
+.board-wrap{overflow-x:auto;margin-top:8px}
+.board{display:flex;align-items:flex-end;gap:0;min-width:620px}
+.zone{display:flex;gap:16px;align-items:flex-end}
+.board-sep{width:1px;background:#e0e0e0;margin:0 16px;align-self:stretch}
+.gcol{display:flex;flex-direction:column;align-items:center;width:64px}
+.gcol .g-label{font-size:11px;color:#888;text-align:center;margin-bottom:6px;width:100%}
+.gcol .g-svg-wrap{display:flex;justify-content:center;width:64px}
+.gcol .g-name{font-size:13px;font-weight:500;color:#1a1a1a;text-align:center;margin-top:6px;width:100%}
+.gcol .g-rel{font-size:11px;color:#888;text-align:center;margin-top:3px;min-height:16px;width:100%}
+.gcol .g-verd{font-size:12px;font-weight:500;text-align:center;margin-top:2px;min-height:18px;width:100%}
+.cg{color:#16a34a}.cr{color:#dc2626}.ca{color:#d97706}
+.sync-badge{font-size:12px;padding:4px 10px;border-radius:6px}
+.s-ok{background:#dcfce7;color:#166534}
+.s-err{background:#fee2e2;color:#991b1b}
+.s-ing{background:#fef9c3;color:#854d0e}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>梅花易數起卦工具</h1>
+    <p>本卦 · 互卦 · 變卦 · 體用五行生剋</p>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('manual')">手動選爻</button>
+    <button class="tab" onclick="switchTab('number')">數字起卦</button>
+    <button class="tab" onclick="switchTab('time')">時間起卦</button>
+  </div>
+
+  <!-- 手動選爻 -->
+  <div class="panel active" id="panel-manual">
+    <div class="sec">
+      <div class="sec-title">點選六爻（初爻→上爻）— 點擊切換陰陽，右鍵／長按標記變爻（橘色）</div>
+      <div class="yao-grid" id="manual-yaos"></div>
+      <div class="q-row" style="margin-top:12px">
+        <span class="q-label">問事：</span>
+        <input class="q-input" type="text" id="q-manual" placeholder="輸入問事概要（可留空）">
+      </div>
+      <div class="flex-row">
+        <button class="btn pri" onclick="calcManual()">排卦</button>
+        <button class="btn" onclick="resetManual()">重設</button>
+        <button class="btn green" id="save-btn-manual" disabled onclick="doSave('manual')">儲存/上傳</button>
+        <span id="save-badge-manual" class="sync-badge"></span>
+      </div>
+    </div>
+    <div id="manual-result"></div>
+  </div>
+
+  <!-- 數字起卦 -->
+  <div class="panel" id="panel-number">
+    <div class="sec">
+      <div class="sec-title">輸入 1–3 組數字起卦</div>
+      <div class="num-grid">
+        <div><div class="field-label">上卦數</div><input type="number" id="n1" placeholder="如 15" min="1"></div>
+        <div><div class="field-label">下卦數</div><input type="number" id="n2" placeholder="如 8" min="1"></div>
+      </div>
+      <div class="num-grid" style="margin-bottom:10px">
+        <div><div class="field-label">動爻數</div><input type="number" id="n3" placeholder="如 3" min="1"></div>
+        <div><div class="field-label">問事</div><input type="text" id="q-number" placeholder="輸入問事概要（可留空）"></div>
+      </div>
+      <div class="hint" style="margin-bottom:10px">先天八卦數：乾1 兌2 離3 震4 巽5 坎6 艮7 坤8 ｜ 各數÷8取餘（餘0=8），動爻÷6取餘（餘0=6）</div>
+      <div id="num-calc-preview"></div>
+      <div class="flex-row">
+        <button class="btn pri" onclick="calcNumber()">起卦</button>
+        <button class="btn" onclick="clearNum()">清除</button>
+        <button class="btn green" id="save-btn-number" disabled onclick="doSave('number')">儲存/上傳</button>
+        <span id="save-badge-number" class="sync-badge"></span>
+      </div>
+    </div>
+    <div id="number-result"></div>
+  </div>
+
+  <!-- 時間起卦 -->
+  <div class="panel" id="panel-time">
+    <div class="time-cols">
+      <div class="sec" style="margin-bottom:0">
+        <div class="sec-title">現在時間起卦</div>
+        <div id="time-display" style="font-size:18px;font-weight:500;color:#1a1a1a;margin:6px 0;font-variant-numeric:tabular-nums"></div>
+        <div id="time-detail" style="font-size:12px;color:#888;margin-bottom:12px"></div>
+        <div class="q-row">
+          <span class="q-label">問事：</span>
+          <input class="q-input" type="text" id="q-time-now" placeholder="輸入問事概要（可留空）">
+        </div>
+        <div class="flex-row">
+          <button class="btn pri" onclick="calcTimeNow()">以現在時間起卦</button>
+          <button class="btn green" id="save-btn-time-now" disabled onclick="doSave('time-now')">儲存/上傳</button>
+          <span id="save-badge-time-now" class="sync-badge"></span>
+        </div>
+      </div>
+      <div class="sec" style="margin-bottom:0">
+        <div class="sec-title">指定時間起卦</div>
+        <div style="margin-bottom:10px">
+          <div class="field-label">選擇時間</div>
+          <input type="datetime-local" id="custom-time">
+        </div>
+        <div class="q-row">
+          <span class="q-label">問事：</span>
+          <input class="q-input" type="text" id="q-time-custom" placeholder="輸入問事概要（可留空）">
+        </div>
+        <div class="flex-row">
+          <button class="btn pri" onclick="calcTimeCustom()">起卦</button>
+          <button class="btn green" id="save-btn-time-custom" disabled onclick="doSave('time-custom')">儲存/上傳</button>
+          <span id="save-badge-time-custom" class="sync-badge"></span>
+        </div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-title">時間起卦取數說明</div>
+      <div class="hint">
+        <b style="color:#1a1a1a;font-weight:500">時辰對照（子時從23:00起）</b><br>
+        子=1(23-00) 丑=2(01-02) 寅=3(03-04) 卯=4(05-06) 辰=5(07-08) 巳=6(09-10)<br>
+        午=7(11-12) 未=8(13-14) 申=9(15-16) 酉=10(17-18) 戌=11(19-20) 亥=12(21-22)<br><br>
+        <b style="color:#1a1a1a;font-weight:500">上卦</b> = (年+月+日) ÷ 8 取餘　　
+        <b style="color:#1a1a1a;font-weight:500">下卦</b> = (年+月+日+時辰序) ÷ 8 取餘　　
+        <b style="color:#1a1a1a;font-weight:500">動爻</b> = (年+月+日+時辰序) ÷ 6 取餘
+      </div>
+    </div>
+    <div id="time-result"></div>
+  </div>
+</div>
+
+<script>
+var WEBHOOK='https://script.google.com/macros/s/AKfycbwPMYcdGfSI7LclAL6quiAHGYVjZpyw2wkFV8SJYkzcXQDVpdTVyMjQAro6bk3t9Qwz3w/exec';
+
+var BAGUA=[
+  {name:'乾',lines:[1,1,1],wx:'金',dir:'天'},{name:'兌',lines:[0,1,1],wx:'金',dir:'澤'},
+  {name:'離',lines:[1,0,1],wx:'火',dir:'火'},{name:'震',lines:[0,0,1],wx:'木',dir:'雷'},
+  {name:'巽',lines:[1,1,0],wx:'木',dir:'風'},{name:'坎',lines:[0,1,0],wx:'水',dir:'水'},
+  {name:'艮',lines:[1,0,0],wx:'土',dir:'山'},{name:'坤',lines:[0,0,0],wx:'土',dir:'地'}
+];
+var GUA64={'乾乾':'乾為天','乾兌':'天澤履','乾離':'天火同人','乾震':'天雷無妄','乾巽':'天風姤','乾坎':'天水訟','乾艮':'天山遁','乾坤':'天地否','兌乾':'澤天夬','兌兌':'兌為澤','兌離':'澤火革','兌震':'澤雷隨','兌巽':'澤風大過','兌坎':'澤水困','兌艮':'澤山咸','兌坤':'澤地萃','離乾':'火天大有','離兌':'火澤睽','離離':'離為火','離震':'火雷噬嗑','離巽':'火風鼎','離坎':'火水未濟','離艮':'火山旅','離坤':'火地晉','震乾':'雷天大壯','震兌':'雷澤歸妹','震離':'雷火豐','震震':'震為雷','震巽':'雷風恆','震坎':'雷水解','震艮':'雷山小過','震坤':'雷地豫','巽乾':'風天小畜','巽兌':'風澤中孚','巽離':'風火家人','巽震':'風雷益','巽巽':'巽為風','巽坎':'風水渙','巽艮':'風山漸','巽坤':'風地觀','坎乾':'水天需','坎兌':'水澤節','坎離':'水火既濟','坎震':'水雷屯','坎巽':'水風井','坎坎':'坎為水','坎艮':'水山蹇','坎坤':'水地比','艮乾':'山天大畜','艮兌':'山澤損','艮離':'山火賁','艮震':'山雷頤','艮巽':'山風蠱','艮坎':'山水蒙','艮艮':'艮為山','艮坤':'山地剝','坤乾':'地天泰','坤兌':'地澤臨','坤離':'地火明夷','坤震':'地雷復','坤巽':'地風升','坤坎':'地水師','坤艮':'地山謙','坤坤':'坤為地'};
+function getGuaName(u,l){return GUA64[u.name+l.name]||(u.dir+l.dir);}
+var SHICHEN=['子時','丑時','寅時','卯時','辰時','巳時','午時','未時','申時','酉時','戌時','亥時'];
+function getSC(h){if(h===23)return 0;return Math.floor((h+1)/2);}
+function scNum(h){return getSC(h)+1;}
+function l2g(l3){for(var i=0;i<BAGUA.length;i++){var g=BAGUA[i];if(g.lines[0]===l3[0]&&g.lines[1]===l3[1]&&g.lines[2]===l3[2])return g;}return BAGUA[7];}
+function n2g(n){return BAGUA[((n-1)%8+8)%8];}
+function wxRel(a,b){var sh={木:'火',火:'土',土:'金',金:'水',水:'木'},ke={木:'土',土:'水',水:'火',火:'金',金:'木'};if(sh[a]===b)return'我生';if(sh[b]===a)return'生我';if(ke[a]===b)return'我剋';if(ke[b]===a)return'剋我';if(a===b)return'同我';return'';}
+function verdict(rel){if(rel==='生我')return{t:'大吉',c:'cg'};if(rel==='同我')return{t:'大大吉',c:'cg'};if(rel==='我生')return{t:'小兌',c:'ca'};if(rel==='我剋')return{t:'小凶',c:'ca'};if(rel==='剋我')return{t:'大凶',c:'cr'};return{t:'',c:''};}
+
+var LH=6,GAP=5,LW=44,CW=64,SX=Math.round((CW-LW)/2);
+function svgH(n){return n*(LH+GAP)-GAP;}
+function mkSVG(yaos,bians){
+  var n=yaos.length,h=svgH(n),hw=Math.round(LW*0.42);
+  var s='<svg width="'+CW+'" height="'+h+'" style="display:block">';
+  for(var i=n-1;i>=0;i--){var vi=(n-1)-i,y=vi*(LH+GAP);
+    if(yaos[i]===1){s+='<rect x="'+SX+'" y="'+y+'" width="'+LW+'" height="'+LH+'" rx="1" fill="#1a1a1a"/>';}
+    else{s+='<rect x="'+SX+'" y="'+y+'" width="'+hw+'" height="'+LH+'" rx="1" fill="#1a1a1a"/>';s+='<rect x="'+(SX+LW-hw)+'" y="'+y+'" width="'+hw+'" height="'+LH+'" rx="1" fill="#1a1a1a"/>';}
+    if(bians&&bians[i])s+='<circle cx="'+(SX+LW+5)+'" cy="'+(y+LH/2)+'" r="3.5" fill="#d97706"/>';
+  }
+  return s+'</svg>';
+}
+function gL(l,s,n){return '<div class="gcol"><div class="g-label">'+l+'</div><div class="g-svg-wrap">'+s+'</div><div class="g-name">'+n+'</div></div>';}
+function gR(l,s,n,r,v){var vH=(v&&v.t)?'<div class="g-verd '+v.c+'">'+v.t+'</div>':'<div class="g-verd"></div>';var rH=r?'<div class="g-rel">'+r+'</div>':'<div class="g-rel"></div>';return '<div class="gcol"><div class="g-label">'+l+'</div><div class="g-svg-wrap">'+s+'</div><div class="g-name">'+n+'</div>'+rH+vH+'</div>';}
+
+function setBadge(id,cls,txt){var el=document.getElementById(id);if(!el)return;el.className='sync-badge '+(cls||'');el.textContent=txt||'';}
+function setBtn(id,dis){var el=document.getElementById(id);if(el)el.disabled=dis;}
+
+var lastResults={};
+function pad(v){return String(v).padStart(2,'0');}
+
+function doSave(key){
+  var rKey=(key==='time-now'||key==='time-custom')?'time':key;
+  var result=lastResults[rKey];
+  if(!result){alert('請先起卦');return;}
+  var btnId='save-btn-'+key,badgeId='save-badge-'+key;
+  setBtn(btnId,true);setBadge(badgeId,'s-ing','送出中...');
+  var payload={
+    timestamp:result.timestamp,method:result.method,question:result.question,
+    benName:result.benName,huName:result.huName,bianName:result.bianName,
+    ti_name:result.ti.name,ti_wx:result.ti.wx,
+    yong_name:result.yong.name,yong_wx:result.yong.wx,
+    huL_name:result.huL.name,huL_wx:result.huL.wx,
+    huU_name:result.huU.name,huU_wx:result.huU.wx,
+    bL_name:result.bL.name,bL_wx:result.bL.wx,
+    yao6:result.yao6,bian6:result.bian6
+  };
+  fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
+    .then(function(){setBadge(badgeId,'s-ok','已儲存 ✓');setBtn(btnId,false);})
+    .catch(function(){setBadge(badgeId,'s-err','失敗，請重試');setBtn(btnId,false);});
+}
+
+function renderResult(yao6,bian6,container,method,question){
+  var gLL=l2g([yao6[0],yao6[1],yao6[2]]),gU=l2g([yao6[3],yao6[4],yao6[5]]);
+  var huL=l2g([yao6[1],yao6[2],yao6[3]]),huU=l2g([yao6[2],yao6[3],yao6[4]]);
+  var bYao=yao6.map(function(v,i){return bian6[i]?1-v:v;});
+  var bLL=l2g([bYao[0],bYao[1],bYao[2]]),bU=l2g([bYao[3],bYao[4],bYao[5]]);
+  var huDisp=[huL.lines[0],huL.lines[1],huL.lines[2],huU.lines[0],huU.lines[1],huU.lines[2]];
+  var benName=getGuaName(gU,gLL),huName=getGuaName(huU,huL),bianName=getGuaName(bU,bLL);
+  var ti=gLL,yong=gU;
+  var rYong=wxRel(ti.wx,yong.wx),rHuL=wxRel(ti.wx,huL.wx),rHuU=wxRel(ti.wx,huU.wx),rB=wxRel(ti.wx,bLL.wx);
+  var vYong=verdict(rYong),vHuL=verdict(rHuL),vHuU=verdict(rHuU),vB=verdict(rB);
+  var q=question||'';
+  var now=new Date();
+  var ts=now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate())+' '+pad(now.getHours())+':'+pad(now.getMinutes());
+  lastResults[container]={yao6:yao6,bian6:bian6,method:method,question:q,ti:ti,yong:yong,huL:huL,huU:huU,bL:bLL,bU:bU,benName:benName,huName:huName,bianName:bianName,timestamp:ts};
+  if(container==='manual'){setBtn('save-btn-manual',false);setBadge('save-badge-manual','','');}
+  else if(container==='number'){setBtn('save-btn-number',false);setBadge('save-badge-number','','');}
+  else if(container==='time'){setBtn('save-btn-time-now',false);setBadge('save-badge-time-now','','');setBtn('save-btn-time-custom',false);setBadge('save-badge-time-custom','','');}
+  var lz='<div class="zone">'+gL('本',mkSVG(yao6,bian6),benName)+gL('互',mkSVG(huDisp,null),huName)+gL('變',mkSVG(bYao,null),bianName)+'</div>';
+  var rz='<div class="zone">'+gR('體',mkSVG(gLL.lines,null),gLL.name+gLL.wx,'',null)+gR('用',mkSVG(gU.lines,null),gU.name+gU.wx,rYong,vYong)+gR('下互',mkSVG(huL.lines,null),huL.name+huL.wx,rHuL,vHuL)+gR('上互',mkSVG(huU.lines,null),huU.name+huU.wx,rHuU,vHuU)+gR('變',mkSVG(bLL.lines,null),bLL.name+bLL.wx,rB,vB)+'</div>';
+  var qTag=q?'<div style="font-size:13px;color:#888;margin-bottom:8px">問事：'+q+'</div>':'';
+  document.getElementById(container).innerHTML='<div class="sec">'+qTag+'<div class="sec-title">卦象結果 — '+method+'</div><div class="board-wrap"><div class="board">'+lz+'<div class="board-sep"></div>'+rz+'</div></div></div>';
+}
+
+function calcFromDate(dt,question){
+  var y=dt.getFullYear(),mo=dt.getMonth()+1,d=dt.getDate(),h=dt.getHours();
+  var sc=scNum(h),scName=SHICHEN[getSC(h)];
+  var uN=((y+mo+d)%8)||8,lN=((y+mo+d+sc)%8)||8,dong=(y+mo+d+sc)%6||6;
+  var ug=n2g(uN),lg=n2g(lN);
+  var y6=lg.lines.concat(ug.lines),b6=[false,false,false,false,false,false];b6[dong-1]=true;
+  var s1=y+mo+d,s2=s1+sc;
+  var calc='<div class="calc-row">上卦：'+s1+' ÷ 8 餘 <b>'+uN+'</b> → <b>'+ug.name+'('+ug.wx+')</b>　下卦：'+s2+' ÷ 8 餘 <b>'+lN+'</b> → <b>'+lg.name+'('+lg.wx+')</b>　動爻：'+s2+' ÷ 6 餘 <b>'+dong+'</b> → 第 <b>'+dong+'</b> 爻動</div>';
+  renderResult(y6,b6,'time-result','時間起卦 '+y+'/'+mo+'/'+d+' '+scName,question);
+  document.getElementById('time-result').innerHTML=calc+document.getElementById('time-result').innerHTML;
+}
+function calcTimeNow(){calcFromDate(new Date(),document.getElementById('q-time-now').value);}
+function calcTimeCustom(){var val=document.getElementById('custom-time').value;if(!val){alert('請先選擇指定時間');return;}calcFromDate(new Date(val),document.getElementById('q-time-custom').value);}
+function updateClock(){
+  var el=document.getElementById('time-display');if(!el)return;
+  var n=new Date();el.textContent=n.getFullYear()+'年'+(n.getMonth()+1)+'月'+n.getDate()+'日 '+pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());
+  var det=document.getElementById('time-detail');if(det)det.textContent='時辰：'+SHICHEN[getSC(n.getHours())]+'（序'+scNum(n.getHours())+'）';
+}
+var mYaos=[1,1,0,0,0,1],mBian=[false,false,false,false,false,false];
+function initManual(){
+  var g=document.getElementById('manual-yaos');g.innerHTML='';
+  for(var i=0;i<6;i++){(function(idx){
+    var y=mYaos[idx],bv=mBian[idx],btn=document.createElement('div');
+    btn.className='yao-btn'+(y?' yang':'')+(bv?' bian':'');
+    var lh=y?'<div style="width:28px;height:5px;border-radius:1px;background:#1a1a1a"></div>':'<div style="display:flex;gap:4px"><div style="width:11px;height:5px;border-radius:1px;background:'+(bv?'#92400e':'#1a1a1a')+'"></div><div style="width:11px;height:5px;border-radius:1px;background:'+(bv?'#92400e':'#1a1a1a')+'"></div></div>';
+    btn.innerHTML='<span>第'+(idx+1)+'爻</span>'+lh+'<span>'+(y?'陽':'陰')+(bv?'·變':'')+'</span>';
+    btn.onclick=function(){mYaos[idx]=1-mYaos[idx];initManual();};
+    btn.oncontextmenu=function(e){e.preventDefault();mBian[idx]=!mBian[idx];initManual();};
+    var t;btn.addEventListener('touchstart',function(){t=setTimeout(function(){mBian[idx]=!mBian[idx];initManual();},600);},{passive:true});
+    btn.addEventListener('touchend',function(){clearTimeout(t);},{passive:true});
+    g.appendChild(btn);
+  })(i);}
+}
+function calcManual(){renderResult(mYaos.slice(),mBian.slice(),'manual-result','手動選爻',document.getElementById('q-manual').value);}
+function resetManual(){mYaos=[1,1,1,0,1,0];mBian=[false,false,false,false,false,false];initManual();document.getElementById('manual-result').innerHTML='';document.getElementById('q-manual').value='';setBtn('save-btn-manual',true);setBadge('save-badge-manual','','');}
+function clearNum(){['n1','n2','n3'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('num-calc-preview').innerHTML='';document.getElementById('q-number').value='';}
+function calcNumber(){
+  var n1=parseInt(document.getElementById('n1').value)||0,n2=parseInt(document.getElementById('n2').value)||0,n3=parseInt(document.getElementById('n3').value)||0;
+  if(!n1){alert('請至少輸入上卦數');return;}
+  var upper=((n1-1)%8)+1,lower=n2?(((n2-1)%8)+1):((n1%8)||8),dong=n3?(((n3-1)%6)+1):(((n1+(n2||0))%6)||6);
+  var ug=n2g(upper),lg=n2g(lower),y6=lg.lines.concat(ug.lines),b6=[false,false,false,false,false,false];b6[dong-1]=true;
+  document.getElementById('num-calc-preview').innerHTML='<div class="calc-row" style="margin-bottom:10px">上卦：'+n1+' ÷ 8 餘 <b>'+upper+'</b> → <b>'+ug.name+'('+ug.wx+')</b>　下卦：'+(n2?n2+' ÷ 8 餘 <b>'+lower:'同上 <b>'+lower)+'</b> → <b>'+lg.name+'('+lg.wx+')</b>　動爻：'+(n3?n3:n1+(n2?'+'+n2:''))+' ÷ 6 餘 <b>'+dong+'</b> → 第 <b>'+dong+'</b> 爻動</div>';
+  renderResult(y6,b6,'number-result','數字起卦（'+n1+(n2?','+n2:'')+(n3?','+n3:'')+'）',document.getElementById('q-number').value);
+}
+function switchTab(id){
+  var ids=['manual','number','time'];
+  document.querySelectorAll('.tab').forEach(function(t,i){t.classList.toggle('active',ids[i]===id);});
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('panel-'+id).classList.add('active');
+}
+var now=new Date();
+document.getElementById('custom-time').value=now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate())+'T'+pad(now.getHours())+':'+pad(now.getMinutes());
+initManual();setInterval(updateClock,1000);updateClock();
+</script>
+</body>
+</html>
