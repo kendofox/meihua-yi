@@ -179,7 +179,7 @@ function scN(h){return getSC(h)+1;}
 function l2g(l3){for(var i=0;i<BAGUA.length;i++){var g=BAGUA[i];if(g.lines[0]===l3[0]&&g.lines[1]===l3[1]&&g.lines[2]===l3[2])return g;}return BAGUA[7];}
 function n2g(n){return BAGUA[((n-1)%8+8)%8];}
 function wxRel(a,b){var sh={木:'火',火:'土',土:'金',金:'水',水:'木'},ke={木:'土',土:'水',水:'火',火:'金',金:'木'};if(sh[a]===b)return'我生';if(sh[b]===a)return'生我';if(ke[a]===b)return'我剋';if(ke[b]===a)return'剋我';if(a===b)return'同我';return'';}
-function verdict(rel){if(rel==='生我')return{t:'大吉',c:'cg'};if(rel==='同我')return{t:'大大吉',c:'cg'};if(rel==='我生')return{t:'小兌',c:'ca'};if(rel==='我剋')return{t:'小凶',c:'cr'};if(rel==='剋我')return{t:'大凶',c:'cr'};return{t:'',c:''};}
+function verdict(rel){if(rel==='生我')return{t:'大吉',c:'cg'};if(rel==='同我')return{t:'大大吉',c:'cg'};if(rel==='我生')return{t:'小凶',c:'ca'};if(rel==='我剋')return{t:'小凶',c:'ca'};if(rel==='剋我')return{t:'大凶',c:'cr'};return{t:'',c:''};}
 var LH=6,GAP=5,LW=44,CW=64,SX=Math.round((CW-LW)/2);
 function svgH(n){return n*(LH+GAP)-GAP;}
 function mkSVG(yaos,bians){
@@ -229,12 +229,19 @@ function renderResult(yao6,bian6,container,method,question){
   var now=new Date();
   var ts=now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate())+' '+pad(now.getHours())+':'+pad(now.getMinutes());
   lastResults[container]={yao6:yao6,bian6:bian6,method:method,question:q,ti:ti,yong:yong,huL:huL,huU:huU,bL:bLL,bU:bU,benName:benName,huName:huName,bianName:bianName,timestamp:ts};
-  var cid=container;
-  setTimeout(function(){
-    if(cid==='manual'){setBtn('save-btn-manual',false);setBadge('save-badge-manual','','');}
-    else if(cid==='number'){setBtn('save-btn-number',false);setBadge('save-badge-number','','');}
-    else if(cid==='time'){setBtn('save-btn-time-now',false);setBadge('save-badge-time-now','','');setBtn('save-btn-time-custom',false);setBadge('save-badge-time-custom','','');}
-  },50);
+  // 啟用儲存按鈕
+  if(container==='manual'){
+    document.getElementById('save-btn-manual').disabled=false;
+    setBadge('save-badge-manual','','');
+  } else if(container==='number'){
+    document.getElementById('save-btn-number').disabled=false;
+    setBadge('save-badge-number','','');
+  } else if(container==='time'){
+    document.getElementById('save-btn-time-now').disabled=false;
+    document.getElementById('save-btn-time-custom').disabled=false;
+    setBadge('save-badge-time-now','','');
+    setBadge('save-badge-time-custom','','');
+  }
   var lz='<div class="zone">'+gcolL('本',mkSVG(yao6,bian6),benName)+gcolL('互',mkSVG(huDisp,null),huName)+gcolL('變',mkSVG(bYao,null),bianName)+'</div>';
   var rz='<div class="zone">'+gcolR('體',mkSVG(gLL.lines,null),gLL.name+gLL.wx,'',null)+gcolR('用',mkSVG(gU.lines,null),gU.name+gU.wx,rYong,vYong)+gcolR('下互',mkSVG(huL.lines,null),huL.name+huL.wx,rHuL,vHuL)+gcolR('上互',mkSVG(huU.lines,null),huU.name+huU.wx,rHuU,vHuU)+gcolR('變',mkSVG(bLL.lines,null),bLL.name+bLL.wx,rB,vB)+'</div>';
   var qTag=q?'<div style="font-size:13px;color:#888;margin-bottom:8px">問事：'+q+'</div>':'';
