@@ -388,13 +388,48 @@ function submitPw(){
     document.getElementById('pw-input').focus();
   }
 }
+
+var _pendingSaveKey = null;
+
+function openSaveModal(key){
+  var rKey=(key==='time-now'||key==='time-custom')?'time-result':(key+'-result');
+  if(!lastResults[rKey]){alert('請先起卦');return;}
+  _pendingSaveKey = key;
+  document.getElementById('pw-input').value='';
+  document.getElementById('pw-err').textContent='';
+  document.getElementById('pw-modal').classList.add('show');
+  setTimeout(function(){document.getElementById('pw-input').focus();},100);
+}
+
+function closeModal(){
+  document.getElementById('pw-modal').classList.remove('show');
+  _pendingSaveKey = null;
+}
+
+function submitPw(){
+  var pw = document.getElementById('pw-input').value;
+  if(pw === '700315'){
+    closeModal();
+    doSave(_pendingSaveKey);
+  } else {
+    document.getElementById('pw-err').textContent = '密碼錯誤，再試試看 🦊';
+    document.getElementById('pw-input').value='';
+    document.getElementById('pw-input').focus();
+  }
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  var inp=document.getElementById('pw-input');
+  if(inp) inp.addEventListener('keydown',function(e){if(e.key==='Enter')submitPw();});
+});
+
 </script>
 
 <div class="modal-overlay" id="pw-modal">
   <div class="modal-box">
     <h3>🦊 這是狐狸專用的</h3>
     <p>按了也沒用，除非你知道密碼。</p>
-    <input class="modal-input" type="password" id="pw-input" placeholder="輸入通關密碼" maxlength="10">
+    <input class="modal-input" type="password" id="pw-input" placeholder="通關密碼" maxlength="10">
     <div class="modal-err" id="pw-err"></div>
     <div class="modal-btns">
       <button class="btn" style="flex:1" onclick="closeModal()">取消</button>
@@ -402,11 +437,6 @@ function submitPw(){
     </div>
   </div>
 </div>
-<script>
-document.addEventListener('DOMContentLoaded',function(){
-  var inp=document.getElementById('pw-input');
-  if(inp) inp.addEventListener('keydown',function(e){if(e.key==='Enter')submitPw();});
-});
-</script>
+
 </body>
 </html>
