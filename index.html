@@ -199,7 +199,7 @@ function setBtn(id,dis){var el=document.getElementById(id);if(el)el.disabled=dis
 var lastResults={};
 function pad(v){return String(v).padStart(2,'0');}
 function doSave(key){
-  var rKey=(key==='time-now'||key==='time-custom')?'time':key;
+  var rKey=(key==='time-now'||key==='time-custom')?'time-result':(key+'-result');
   var result=lastResults[rKey];
   if(!result){alert('請先起卦');return;}
   var btnId='save-btn-'+key,badgeId='save-badge-'+key;
@@ -230,13 +230,13 @@ function renderResult(yao6,bian6,container,method,question){
   var ts=now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate())+' '+pad(now.getHours())+':'+pad(now.getMinutes());
   lastResults[container]={yao6:yao6,bian6:bian6,method:method,question:q,ti:ti,yong:yong,huL:huL,huU:huU,bL:bLL,bU:bU,benName:benName,huName:huName,bianName:bianName,timestamp:ts};
   // 啟用儲存按鈕
-  if(container==='manual'){
+  if(container==='manual-result'){
     document.getElementById('save-btn-manual').disabled=false;
     setBadge('save-badge-manual','','');
-  } else if(container==='number'){
+  } else if(container==='number-result'){
     document.getElementById('save-btn-number').disabled=false;
     setBadge('save-badge-number','','');
-  } else if(container==='time'){
+  } else if(container==='time-result'){
     document.getElementById('save-btn-time-now').disabled=false;
     document.getElementById('save-btn-time-custom').disabled=false;
     setBadge('save-badge-time-now','','');
