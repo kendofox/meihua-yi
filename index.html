@@ -178,7 +178,7 @@ input::placeholder{color:#555}
 </div>
 
 <script>
-var WEBHOOK='https://script.google.com/macros/s/AKfycby-BGuFiLQy82__KRKpLGtVBC3btw0SpBlyuM8iTChGiMKys_um-yIti6-D8sNXPALYYQ/exec';
+var WEBHOOK='https://script.google.com/macros/s/AKfycbzjhBFdSxaqjSyDT-EuiwZdcL8aVr1TnUHv_e3Css9SZg8Qaq2HV5jv1tJ0Ix9w0AL6/exec';
 var BAGUA=[
   {name:'乾',lines:[1,1,1],wx:'金',dir:'天'},{name:'兌',lines:[0,1,1],wx:'金',dir:'澤'},
   {name:'離',lines:[1,0,1],wx:'火',dir:'火'},{name:'震',lines:[0,0,1],wx:'木',dir:'雷'},
@@ -338,13 +338,16 @@ function downloadImg(containerId){
   var btnKey=containerId==='time-result'?'time':containerId.replace('-result','');
   var btn=document.getElementById('dl-btn-'+btnKey);
   if(btn){btn.textContent='截圖中...';}
+  // 先取得 .board 的實際寬度來決定截圖寬度
+  var board = target.querySelector('.board');
+  var captureW = board ? board.scrollWidth + 48 : target.scrollWidth;
   html2canvas(target,{
     backgroundColor:'#242424',
     scale:2,
     useCORS:true,
     logging:false,
-    windowWidth:target.scrollWidth,
-    width:target.scrollWidth
+    width:captureW,
+    windowWidth:captureW
   }).then(function(canvas){
     var link=document.createElement('a');
     var now=new Date();
@@ -380,8 +383,9 @@ function closeModal(){
 function submitPw(){
   var pw = document.getElementById('pw-input').value;
   if(pw === '700315'){
+    var keyToSave = _pendingSaveKey;
     closeModal();
-    doSave(_pendingSaveKey);
+    doSave(keyToSave);
   } else {
     document.getElementById('pw-err').textContent = '密碼錯誤，再試試看 🦊';
     document.getElementById('pw-input').value='';
@@ -409,8 +413,9 @@ function closeModal(){
 function submitPw(){
   var pw = document.getElementById('pw-input').value;
   if(pw === '700315'){
+    var keyToSave = _pendingSaveKey;
     closeModal();
-    doSave(_pendingSaveKey);
+    doSave(keyToSave);
   } else {
     document.getElementById('pw-err').textContent = '密碼錯誤，再試試看 🦊';
     document.getElementById('pw-input').value='';
