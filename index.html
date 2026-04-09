@@ -139,7 +139,7 @@ input::placeholder{color:#555}
           <input class="q-input" type="text" id="q-time-now" placeholder="輸入問事概要（可留空）">
         </div>
         <div class="flex-row">
-          <button class="btn pri" onclick="calcTimeNow()">以現在時間起卦</button>
+          <button class="btn pri" onclick="calcTimeNow()">以現在時間起卦（國曆計算）</button>
           <button class="btn green" id="save-btn-time-now" disabled onclick="openSaveModal('time-now')">儲存/上傳</button>
           <span id="save-badge-time-now" class="sync-badge"></span>
         </div>
@@ -178,7 +178,7 @@ input::placeholder{color:#555}
 </div>
 
 <script>
-var WEBHOOK='https://script.google.com/macros/s/AKfycbxMCnUPPXS4yqjeJJmqDKTwDSbBiCJo8F8VCGuQ1Uvc4kDeVpq60Xsf5oMMCavpne3NQw/exec';
+var WEBHOOK='https://script.google.com/macros/s/AKfycbxuONBDidCSZJ-LTtjX619QvkIaMgQkaY95lr8Zuls0gWWU05i_YH9QOJty6OD2iBmz-Q/exec';
 var BAGUA=[
   {name:'乾',lines:[1,1,1],wx:'金',dir:'天'},{name:'兌',lines:[0,1,1],wx:'金',dir:'澤'},
   {name:'離',lines:[1,0,1],wx:'火',dir:'火'},{name:'震',lines:[0,0,1],wx:'木',dir:'雷'},
